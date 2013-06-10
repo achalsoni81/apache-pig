@@ -1017,8 +1017,9 @@ java -cp $PIG_HOME/pig.jar
 <p>You can set the values for these properties:</p>
 
 <ul>
-<li>pig.maxCombinedSplitSize – Specifies the size, in bytes, of data to be processed by a single map. Smaller files are combined untill this size is reached. </li>
-<li>pig.splitCombination – Turns combine split files on or off (set to “true” by default).</li>
+<li>pig.maxCombinedSplitNum - Specifies the number of input splits to be processed by a single map. Input splits are combined until this number is reached (set to "Long.MAX_VALUE" by default).</li>
+<li>pig.maxCombinedSplitSize - Specifies the size, in bytes, of data to be processed by a single map. Smaller files are combined untill this size is reached (set to dfs block size by default).</li>
+<li>pig.splitCombination - Turns combine split files on or off (set to "true" by default).</li>
 </ul>
 <p></p>
 

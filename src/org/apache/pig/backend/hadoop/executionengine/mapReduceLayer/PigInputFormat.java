@@ -19,11 +19,7 @@ package org.apache.pig.backend.hadoop.executionengine.mapReduceLayer;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.HashSet;
-import java.util.HashMap;
-import java.util.Comparator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,7 +32,6 @@ import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobContext;
-import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.pig.ExecType;
 import org.apache.pig.FuncSpec;
@@ -54,8 +49,9 @@ import org.apache.pig.impl.PigContext;
 import org.apache.pig.impl.io.FileSpec;
 import org.apache.pig.impl.plan.OperatorKey;
 import org.apache.pig.impl.util.ObjectSerializer;
-import org.apache.pig.impl.util.Pair;
 import org.apache.pig.impl.util.UDFContext;
+
+import static org.apache.pig.PigConfiguration.*;
 
 public class PigInputFormat extends InputFormat<Text, Tuple> {
 
@@ -328,14 +324,16 @@ public class PigInputFormat extends InputFormat<Text, Tuple> {
             }
             return pigSplits;
         } else {
-            long maxCombinedSplitSize = conf.getLong("pig.maxCombinedSplitSize", 0);
+            long maxCombinedSplitSize = conf.getLong(PROP_MAX_COMBINED_SPLIT_SIZE, 0);
+            long maxCombinedSplitNum = conf.getLong(PROP_MAX_COMBINED_SPLIT_NUM, Long.MAX_VALUE);
             if (maxCombinedSplitSize== 0)
                 // default is the block size
                 maxCombinedSplitSize = blockSize;
             List<List<InputSplit>> combinedSplits = 
-                MapRedUtil.getCombinePigSplits(oneInputSplits, maxCombinedSplitSize, conf);
-            for (int i = 0; i < combinedSplits.size(); i++)
+                MapRedUtil.getCombinePigSplits(oneInputSplits, maxCombinedSplitSize, maxCombinedSplitNum, conf);
+            for (int i = 0; i < combinedSplits.size(); i++) {
                 pigSplits.add(createPigSplit(combinedSplits.get(i), inputIndex, targetOps, i, conf));
+            }
             return pigSplits;
         }
     }

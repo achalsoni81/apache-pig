@@ -24,18 +24,16 @@ import java.util.HashSet;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.PathFilter;
-import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.PigInputFormat;
 import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.PigSplit;
 import org.apache.pig.impl.plan.OperatorKey;
 
 import junit.framework.Assert;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.apache.pig.PigConfiguration.*;
 
 public class TestSplitCombine {
     private Configuration conf;
@@ -75,7 +73,7 @@ public class TestSplitCombine {
     @Before
     public void setUp() throws Exception {
         conf = new Configuration();
-        conf.setLong("pig.maxCombinedSplitSize", 1000);
+        conf.setLong(PROP_MAX_COMBINED_SPLIT_SIZE, 1000);
         pigInputFormat = new TestPigInputFormat();
         ok = new ArrayList<OperatorKey>();
         ok.add(new OperatorKey());
@@ -458,7 +456,41 @@ public class TestSplitCombine {
             index++;
         }
     }
-    
+
+    /**
+     * Verify that the number of combined splits doesn't exceed the configured
+     * upper limit.
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    @Test
+    public void test10() throws IOException, InterruptedException {
+        final int splitSize = 1;
+        final int numSplits = 100;
+        final int maxCombinedSplitNum = 2;
+        conf.setLong(PROP_MAX_COMBINED_SPLIT_NUM, maxCombinedSplitNum);
+        ArrayList<InputSplit> rawSplits = new ArrayList<InputSplit>();
+        for (int i = 0; i < numSplits; i++) {
+            rawSplits.add(new DummyInputSplit(splitSize, new String[] {
+                            "l1", "l2", "l3"
+            }));
+        }
+        List<InputSplit> result = pigInputFormat.getPigSplits(rawSplits, 0, ok,
+                        null, true, conf);
+        Assert.assertEquals(numSplits / maxCombinedSplitNum, result.size());
+        for (InputSplit split : result) {
+            PigSplit pigSplit = (PigSplit) split;
+            int len = pigSplit.getNumPaths();
+            Assert.assertEquals(maxCombinedSplitNum, len);
+            checkLocations(pigSplit.getLocations(), new String[] {
+                            "l1", "l2", "l3"
+            });
+            for (int i = 0; i < maxCombinedSplitNum; i++) {
+                Assert.assertEquals(splitSize, pigSplit.getLength(i));
+            }
+        }
+    }
+
     private void checkLocations(String[] actual, String[] expected) {
         HashSet<String> expectedSet = new HashSet<String>();
         for (String str : expected)

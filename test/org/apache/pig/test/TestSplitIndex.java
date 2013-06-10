@@ -37,6 +37,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import static org.apache.pig.PigConfiguration.*;
+
 @RunWith(JUnit4.class)
 public class TestSplitIndex {
     private PigServer pigServer;
@@ -73,7 +75,7 @@ public class TestSplitIndex {
     
     @Test
     public void testSplitIndexNoCombine() throws Exception {
-        pigServer.getPigContext().getProperties().setProperty("pig.splitCombination", "false");
+        pigServer.getPigContext().getProperties().setProperty(PROP_SPLIT_COMBINATION, "false");
         pigServer.registerQuery("a = load '" + Util.encodeEscape(inputDir.toString()) + "' using " + SplitSensitiveLoadFunc.class.getName() + "();");
         Iterator<Tuple> iter = pigServer.openIterator("a");
         

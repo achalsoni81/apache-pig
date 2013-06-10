@@ -44,7 +44,6 @@ import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.PigMapReduce
 import org.apache.pig.backend.hadoop.executionengine.physicalLayer.PhysicalOperator;
 import org.apache.pig.backend.hadoop.executionengine.physicalLayer.plans.PhysicalPlan;
 import org.apache.pig.backend.hadoop.executionengine.physicalLayer.relationalOperators.POStore;
-import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.PigSplit;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
@@ -355,7 +354,7 @@ public class MapRedUtil {
     }
   
     public static List<List<InputSplit>> getCombinePigSplits(List<InputSplit>
-        oneInputSplits, long maxCombinedSplitSize, Configuration conf)
+        oneInputSplits, long maxCombinedSplitSize, long maxCombinedSplitNum, Configuration conf)
           throws IOException, InterruptedException {
         ArrayList<Node> nodes = new ArrayList<Node>();
         HashMap<String, Node> nodeMap = new HashMap<String, Node>();
@@ -452,6 +451,7 @@ public class MapRedUtil {
                 // sort the splits on this node in descending order
                 node.sort();
                 long totalSize = 0;
+                long numCombinedSplits = 0;
                 ArrayList<ComparableSplit> splits = node.getSplits();
                 int idx;
                 int lenSplits;
@@ -460,6 +460,7 @@ public class MapRedUtil {
                 while (!splits.isEmpty()) {
                     combinedSplits.add(splits.get(0).getSplit());
                     combinedComparableSplits.add(splits.get(0));
+                    numCombinedSplits++;
                     int startIdx = 1;
                     lenSplits = splits.size();
                     totalSize += splits.get(0).getSplit().getLength();
@@ -469,9 +470,13 @@ public class MapRedUtil {
                     idx = -idx-1+startIdx;
                     while (idx < lenSplits)
                     {
+                        if (numCombinedSplits >= maxCombinedSplitNum) {
+                            break;
+                        }
                         long thisLen = splits.get(idx).getSplit().getLength();
                         combinedSplits.add(splits.get(idx).getSplit());
                         combinedComparableSplits.add(splits.get(idx));
+                        numCombinedSplits++;
                         totalSize += thisLen;
                         spaceLeft -= thisLen;
                         if (spaceLeft <= 0)
@@ -484,11 +489,12 @@ public class MapRedUtil {
                         idx = Collections.binarySearch(node.getSplits().subList(startIdx, lenSplits), dummyComparableSplit);
                         idx = -idx-1+startIdx;
                     }
-                    if (totalSize > maxCombinedSplitSize/2) {
+                    if (numCombinedSplits >= maxCombinedSplitNum || totalSize > maxCombinedSplitSize/2) {
                         result.add(combinedSplits);
                         resultLengths.add(totalSize);
                         removeSplits(combinedComparableSplits);
                         totalSize = 0;
+                        numCombinedSplits = 0;
                         combinedSplits = new ArrayList<InputSplit>();
                         combinedComparableSplits.clear();
                         splits = node.getSplits();
@@ -524,6 +530,7 @@ public class MapRedUtil {
             if (!leftoverSplits.isEmpty())
             {
                 long totalSize = 0;
+                long numCombinedSplits = 0;
                 ArrayList<InputSplit> combinedSplits = new ArrayList<InputSplit>();
                 ArrayList<ComparableSplit> combinedComparableSplits = new ArrayList<ComparableSplit>();
                 
@@ -532,16 +539,18 @@ public class MapRedUtil {
                 {
                     ComparableSplit split = leftoverSplits.get(i);
                     long thisLen = split.getSplit().getLength();
-                    if (totalSize + thisLen >= maxCombinedSplitSize) {
+                    if (numCombinedSplits + 1 >= maxCombinedSplitNum || totalSize + thisLen >= maxCombinedSplitSize) {
                         removeSplits(combinedComparableSplits);
                         result.add(combinedSplits);
                         resultLengths.add(totalSize);
                         combinedSplits = new ArrayList<InputSplit>();
                         combinedComparableSplits.clear();
                         totalSize = 0;
+                        numCombinedSplits = 0;
                     }
                     combinedSplits.add(split.getSplit());
                     combinedComparableSplits.add(split);
+                    numCombinedSplits++;
                     totalSize += split.getSplit().getLength();
                     if (i == splitLen - 1) {
                         // last piece: it could be very small, try to see it can be squeezed into any existing splits

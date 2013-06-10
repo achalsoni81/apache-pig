@@ -1274,6 +1274,7 @@ public class MRCompiler extends PhyPlanVisitor {
                             List<List<InputSplit>> results = MapRedUtil
                             .getCombinePigSplits(splits,
                                     HadoopShims.getDefaultBlockSize(fs, path),
+                                    Long.MAX_VALUE,
                                     conf);
                             numFiles += results.size();
                         } else {

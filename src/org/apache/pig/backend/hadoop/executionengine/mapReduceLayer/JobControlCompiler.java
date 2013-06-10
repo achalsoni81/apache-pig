@@ -47,7 +47,6 @@ import org.apache.hadoop.io.WritableComparator;
 import org.apache.hadoop.mapred.Counters;
 import org.apache.hadoop.mapred.Counters.Counter;
 import org.apache.hadoop.mapred.Counters.Group;
-import org.apache.hadoop.mapred.JobClient;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.JobPriority;
 import org.apache.hadoop.mapred.jobcontrol.Job;
@@ -106,6 +105,8 @@ import org.apache.pig.impl.util.Pair;
 import org.apache.pig.impl.util.UDFContext;
 import org.apache.pig.impl.util.Utils;
 import org.apache.pig.tools.pigstats.ScriptState;
+
+import static org.apache.pig.PigConfiguration.*;
 
 /**
  * This is compiler class that takes an MROperPlan and converts
@@ -813,18 +814,34 @@ public class JobControlCompiler{
             }
 
             String tmp;
+            long maxCombinedSplitNum = 0;
             long maxCombinedSplitSize = 0;
-            if (!mro.combineSmallSplits() || pigContext.getProperties().getProperty("pig.splitCombination", "true").equals("false"))
+            if (!mro.combineSmallSplits() || pigContext.getProperties().getProperty(PROP_SPLIT_COMBINATION, "true").equals("false")) {
                 conf.setBoolean("pig.noSplitCombination", true);
-            else if ((tmp = pigContext.getProperties().getProperty("pig.maxCombinedSplitSize", null)) != null) {
-                try {
-                    maxCombinedSplitSize = Long.parseLong(tmp);
-                } catch (NumberFormatException e) {
-                    log.warn("Invalid numeric format for pig.maxCombinedSplitSize; use the default maximum combined split size");
+            } else {
+                if ((tmp = pigContext.getProperties().getProperty(PROP_MAX_COMBINED_SPLIT_NUM, null)) != null) {
+                    try {
+                        maxCombinedSplitNum = Long.parseLong(tmp);
+                    } catch (NumberFormatException e) {
+                        log.warn("Invalid numeric format for " + PROP_MAX_COMBINED_SPLIT_NUM
+                                + "; use the default maximum combined split number");
+                    }
+                }
+                if ((tmp = pigContext.getProperties().getProperty(PROP_MAX_COMBINED_SPLIT_SIZE, null)) != null) {
+                    try {
+                        maxCombinedSplitSize = Long.parseLong(tmp);
+                    } catch (NumberFormatException e) {
+                        log.warn("Invalid numeric format for " + PROP_MAX_COMBINED_SPLIT_SIZE
+                                + "; use the default maximum combined split size");
+                    }
                 }
             }
-            if (maxCombinedSplitSize > 0)
-                conf.setLong("pig.maxCombinedSplitSize", maxCombinedSplitSize);
+            if (maxCombinedSplitNum > 0) {
+                conf.setLong(PROP_MAX_COMBINED_SPLIT_NUM, maxCombinedSplitNum);
+            }
+            if (maxCombinedSplitSize > 0) {
+                conf.setLong(PROP_MAX_COMBINED_SPLIT_SIZE, maxCombinedSplitSize);
+            }
 
             // It's a hack to set distributed cache file for hadoop 23. Once MiniMRCluster do not require local
             // jar on fixed location, this can be removed

@@ -70,7 +70,26 @@ public class PigConfiguration {
 
     public static final String SCHEMA_TUPLE_SHOULD_ALLOW_FORCE = "pig.schematuple.force";
 
-    /*
+    /**
+     * Enables split combination (set to true by default).
+     */
+    public static final String PROP_SPLIT_COMBINATION = "pig.splitCombination";
+
+    /**
+     * Specifies the number of input splits to be processed by a single map.
+     * Input splits are combined until this number is reached (set to Long.MAX_VALUE
+     * by default).
+     */
+    public static final String PROP_MAX_COMBINED_SPLIT_NUM = "pig.maxCombinedSplitNum";
+
+    /**
+     * Specifies the size, in bytes, of data to be processed by a single map.
+     * Smaller files are combined until this size is reached (set to dfs block
+     * size by default).
+     */
+    public static final String PROP_MAX_COMBINED_SPLIT_SIZE = "pig.maxCombinedSplitSize";
+
+    /**
      * Turns off use of combiners in MapReduce jobs produced by Pig.
      */
     public static final String PROP_NO_COMBINER = "pig.exec.nocombiner";
