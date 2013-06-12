@@ -271,6 +271,7 @@ public class BoundScript {
         }
         PigServer pigServer = new PigServer(scriptContext.getPigContext(), false);
         pigServer.setBatchOn();
+        pigServer.setSkipParseInRegisterForBatch(true);
         GruntParser grunt = new GruntParser(new StringReader(query));
         grunt.setInteractive(false);
         grunt.setParams(pigServer);
@@ -288,6 +289,7 @@ public class BoundScript {
         grunt.setInteractive(false);
         grunt.setParams(pigServer);
         pigServer.setBatchOn();
+        pigServer.setSkipParseInRegisterForBatch(true);
         try {
             grunt.parseStopOnError(true);
         } catch (ParseException e) {
@@ -335,6 +337,7 @@ public class BoundScript {
             ScriptState.get().registerListener(adaptor);
             PigServer pigServer = new PigServer(ctx, true);
             pigServer.setBatchOn();
+            pigServer.setSkipParseInRegisterForBatch(true);
             GruntParser grunt = new GruntParser(new StringReader(query));
             grunt.setInteractive(false);
             grunt.setParams(pigServer);

@@ -18,9 +18,9 @@
 
 package org.apache.pig.test;
 
-import static junit.framework.Assert.assertEquals;
 import static org.apache.pig.builtin.mock.Storage.resetData;
 import static org.apache.pig.builtin.mock.Storage.tuple;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -45,9 +45,12 @@ import java.util.Properties;
 
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.mapreduce.Job;
 import org.apache.pig.ExecType;
 import org.apache.pig.PigServer;
+import org.apache.pig.ResourceSchema;
 import org.apache.pig.backend.executionengine.ExecException;
+import org.apache.pig.builtin.mock.Storage;
 import org.apache.pig.builtin.mock.Storage.Data;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
@@ -761,5 +764,57 @@ public class TestPigServer {
         assertEquals(tuple("a", 1, "b"), out.get(0));
         assertEquals(tuple("b", 2, "c"), out.get(1));
         assertEquals(tuple("c", 3, "d"), out.get(2));
+    }
+
+    @Test
+    public void testSkipParseInRegisterForBatch() throws Exception {
+        // numTimesInitiated = 4 (once per registerQuery) + 3 (executeBatch, getSplits, createRecordReader)
+        // numTimesSchemaCalled = 4 (once per registerQuery) + 1 (executeBatch)
+        _testSkipParseInRegisterForBatch(false, 7, 5);
+        // numTimesInitiated = 3 (executeBatch, getSplits, createRecordReader)
+        // numTimesSchemaCalled = 1 (executeBatch)
+        _testSkipParseInRegisterForBatch(true, 3, 1);
+    }
+
+    private void _testSkipParseInRegisterForBatch(boolean skipParseInRegisterForBatch,
+            int numTimesInitiated, int numTimesSchemaCalled) throws Exception {
+        MockTrackingStorage.numTimesInitiated = 0;
+        MockTrackingStorage.numTimesSchemaCalled = 0;
+        PigServer pigServer = new PigServer(ExecType.LOCAL, new Properties());
+        pigServer.setBatchOn();
+        pigServer.setSkipParseInRegisterForBatch(skipParseInRegisterForBatch);
+        Data data = resetData(pigServer);
+        data.set("foo",
+                tuple("a", 1, "b"),
+                tuple("b", 2, "c"),
+                tuple("c", 3, "d"));
+        pigServer.registerQuery("A = LOAD 'foo' USING " + MockTrackingStorage.class.getName() + "();");
+        pigServer.registerQuery("B = order A by f1,f2,f3;");
+        pigServer.registerQuery("C = LIMIT A 2;");
+        pigServer.registerQuery("STORE C INTO 'bar' USING mock.Storage();");
+        pigServer.executeBatch();
+        assertEquals(numTimesInitiated, MockTrackingStorage.numTimesInitiated);
+        assertEquals(numTimesSchemaCalled, MockTrackingStorage.numTimesSchemaCalled);
+        List<Tuple> out = data.get("bar");
+        assertEquals(2, out.size());
+        assertEquals(tuple("a", 1, "b"), out.get(0));
+        assertEquals(tuple("b", 2, "c"), out.get(1));
+    }
+
+    public static class MockTrackingStorage extends Storage {
+
+        public static int numTimesInitiated = 0;
+        public static int numTimesSchemaCalled = 0;
+
+        public MockTrackingStorage() {
+            super();
+            numTimesInitiated++;
+        }
+
+        @Override
+        public ResourceSchema getSchema(String location, Job job) throws IOException {
+            numTimesSchemaCalled++;
+            return super.getSchema(location, job);
+        }
     }
 }

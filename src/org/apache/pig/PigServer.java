@@ -85,7 +85,6 @@ import org.apache.pig.newplan.logical.expression.LogicalExpressionVisitor;
 import org.apache.pig.newplan.logical.expression.ScalarExpression;
 import org.apache.pig.newplan.logical.optimizer.AllExpressionVisitor;
 import org.apache.pig.newplan.logical.optimizer.DanglingNestedNodeRemover;
-import org.apache.pig.newplan.logical.optimizer.UidResetter;
 import org.apache.pig.newplan.logical.relational.LOForEach;
 import org.apache.pig.newplan.logical.relational.LOLoad;
 import org.apache.pig.newplan.logical.relational.LOStore;
@@ -159,6 +158,7 @@ public class PigServer {
     private boolean aggregateWarning = true;
 
     private boolean validateEachStatement = false;
+    private boolean skipParseInRegisterForBatch = false;
 
     private String constructScope() {
         // scope servers for now as a session id
@@ -562,7 +562,7 @@ public class PigServer {
      * @throws IOException
      */
     public void registerQuery(String query, int startLine) throws IOException {
-        currDAG.registerQuery(query, startLine, validateEachStatement);
+        currDAG.registerQuery(query, startLine, validateEachStatement, skipParseInRegisterForBatch);
     }
 
     /**
@@ -1579,8 +1579,8 @@ public class PigServer {
          * Accumulate the given statement to previous query statements and generate
          * an overall (raw) plan.
          */
-        void registerQuery(String query, int startLine, boolean validateEachStatement)
-        throws IOException {
+        void registerQuery(String query, int startLine, boolean validateEachStatement,
+                boolean skipParseForBatch) throws IOException {
             if( batchMode ) {
                 if( startLine == currentLineNum ) {
                     String line = scriptCache.remove( scriptCache.size() - 1 );
@@ -1597,6 +1597,9 @@ public class PigServer {
                         currentLineNum++;
                         line = br.readLine();
                     }
+                }
+                if (skipParseForBatch) {
+                    return;
                 }
             } else {
                 scriptCache.add( query );
@@ -1815,7 +1818,7 @@ public class PigServer {
                     // TODO: Need to figure out if anything different needs to happen if batch
                     // mode is not on
                     // Don't have to do the validation again, so set validateEachStatement param to false
-                    graph.registerQuery(it.next(), lineNumber, false);
+                    graph.registerQuery(it.next(), lineNumber, false, false);
                 }
                 graph.postProcess();
             } catch (IOException ioe) {
@@ -1834,6 +1837,14 @@ public class PigServer {
      */
     public void setValidateEachStatement(boolean validateEachStatement) {
         this.validateEachStatement = validateEachStatement;
+    }
+
+    /**
+     * Set whether to skip parsing while registering the query in batch mode
+     * @param skipParseInRegisterForBatch
+     */
+    public void setSkipParseInRegisterForBatch(boolean skipParseInRegisterForBatch) {
+        this.skipParseInRegisterForBatch = skipParseInRegisterForBatch;
     }
 
     public String getLastRel() {
