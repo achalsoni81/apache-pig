@@ -27,6 +27,9 @@ public enum PigCounters {
     // total number of bags that have spilled proactively
     PROACTIVE_SPILL_COUNT_BAGS, 
     
-    //total number of records that have been spilled to disk
-    PROACTIVE_SPILL_COUNT_RECS;
+    // total number of records that have been spilled to disk
+    PROACTIVE_SPILL_COUNT_RECS,
+
+    // terminate job if this counter exceeds the configured limit
+    JOB_TERMINATION_COUNT
 }

@@ -40,6 +40,7 @@ import org.apache.hadoop.mapred.jobcontrol.Job;
 import org.apache.hadoop.mapred.jobcontrol.JobControl;
 import org.apache.pig.ExecType;
 import org.apache.pig.PigConfiguration;
+import org.apache.pig.PigCounters;
 import org.apache.pig.PigException;
 import org.apache.pig.PigRunner.ReturnCode;
 import org.apache.pig.PigWarning;
@@ -178,7 +179,13 @@ public class MapReduceLauncher extends Launcher{
         
         boolean stop_on_failure = 
             pc.getProperties().getProperty("stop.on.failure", "false").equals("true");
-        
+
+        String upperLimit = pc.getProperties().getProperty(PigConfiguration.PROP_JOB_TERMINATION_COUNT_LIMIT, null);
+        boolean terminateJob = upperLimit != null;
+        if (terminateJob) {
+            log.info(PigConfiguration.PROP_JOB_TERMINATION_COUNT_LIMIT + " is set to " + upperLimit);
+        }
+
         // jc is null only when mrp.size == 0
         while(mrp.size() != 0) {
             jc = jcc.compile(mrp, grpName);
@@ -342,6 +349,12 @@ public class MapReduceLauncher extends Launcher{
                         warn_failure = false;
                         log.warn("Ooops! Some job has failed! Specify -stop_on_failure if you "
                                 + "want Pig to stop immediately on failure.");
+                    }
+
+                    // Check whether the job termination counter has exceeded
+                    // the upper limit. If so, we kill running jobs and exit.
+                    if (terminateJob) {
+                        computeJobTerminationCountAggregate(Long.valueOf(upperLimit));
                     }
                 }
                 
@@ -700,7 +713,44 @@ public class MapReduceLauncher extends Launcher{
             }
         }
     }
-    
+
+    /**
+     * Compute the job termination count aggregate from all MR jobs. If the sum
+     * exceeds the upper limit, we exit the program, and that will invoke the
+     * shutdown hook and kill running jobs.
+     * @param upperLimit Upper limit
+     */
+    private void computeJobTerminationCountAggregate(long upperLimit) {
+        if (jc == null) {
+            return;
+        }
+        try {
+            // Aggregate the counters from every running job
+            for (Job job : jc.getRunningJobs()) {
+                RunningJob runningJob = job.getJobClient().getJob(job.getAssignedJobID());
+                if (runningJob == null) {
+                    continue;
+                }
+                Counters counters = runningJob.getCounters();
+                if (counters == null) {
+                    continue;
+                }
+                long fileCount = counters.findCounter(PigCounters.JOB_TERMINATION_COUNT).getCounter();
+                if (fileCount >= upperLimit) {
+                    log.error("The job termination count has exceeded a upper limit of "
+                            + upperLimit);
+                    // This should invoke shutdown hook and kill the running jobs.
+                    System.exit(0);
+                } else {
+                    log.debug("The job termination count is currently " + fileCount
+                            + ", which is less than a upper limit of " + upperLimit);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Encounter exception while aggregating the job termination count:" + e);
+        }
+    }
+
     @SuppressWarnings("deprecation")
     void computeWarningAggregate(Job job, JobClient jobClient, Map<Enum, Long> aggMap) {
         JobID mapRedJobID = job.getAssignedJobID();

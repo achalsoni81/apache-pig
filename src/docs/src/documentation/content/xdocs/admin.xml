@@ -27,9 +27,35 @@
 <!-- SET UP OUTPUT LOCATION STRICT CHECK -->
     <section>
         <title>Output location strict check</title>
-            <p>Pig scripts could contain multiple STORE statements. There are cases when one would like to avoid writing to the same output location. Pig provides admins/script writers with a property to check if multiple STORE statements make an attempt to write to the same output directory. And fail fast letting the user know of the same.</p>
-            <p>Specifically this makes sense for file-based output locations (HDFS, Local FS, S3..) to avoid Pig script from failing when multiple MR jobs write to the same location. </p>   
-            <p>To enforce strict checking of output location, set <strong>pig.location.check.strict=true</strong>. See also <a href="start.html#properties">Pig Properties</a> on how to set this property.</p>
+            <p>Pig scripts could contain multiple STORE statements. There are
+            cases when one would like to avoid writing to the same output
+            location. Pig provides admins/script writers with a property to
+            check if multiple STORE statements make an attempt to write to the
+            same output directory. And fail fast letting the user know of the
+            same.</p>
+
+            <p>Specifically this makes sense for file-based output
+            locations (HDFS, Local FS, S3..) to avoid Pig script from failing
+            when multiple MR jobs write to the same location. </p> <p>To enforce
+            strict checking of output location, set
+            <strong>pig.location.check.strict=true</strong>. See also <a
+            href="start.html#properties">Pig Properties</a> on how to set this
+            property.</p>
+    </section>
+    <section>
+        <title>Automatic job termination</title>
+            <p>There are cases when one would like to automatically terminate a
+            rogue job. For example, if a job writes a lot of files on HDFS, that
+            can overload the name node impacting other jobs on the cluster.</p>
+
+            <p>To enable automatic job termination, please set the
+            <strong>pig.exec.termination.count.limit</strong> property. When
+            this property is set, Pig monitors a Hadoop counter called
+            PigCounters.JOB_TERMINATION_COUNT and automatically terminates the
+            job if it exceeds the configured limit. Note that it is entirely the
+            user's responsibility to increment this counter properly at runtime.
+            e.g. org.apache.pig.test.udf.storefunc.PigStorageWithFileCount shows
+            how to terminate a rogue job that creates too many files.</p>
     </section>
   </body>
 </document>

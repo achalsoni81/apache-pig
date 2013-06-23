@@ -75,6 +75,11 @@ public class PigConfiguration {
      */
     public static final String PROP_NO_COMBINER = "pig.exec.nocombiner";
 
+    /*
+     * Terminate job if the counter JOB_TERMINATION_COUNT exceeds the configured limit
+     */
+    public static final String PROP_JOB_TERMINATION_COUNT_LIMIT = "pig.exec.termination.count.limit";
+
     /**
      * This key can be used to defined what properties will be set in the streaming environment.
      * Just set this property to a comma-delimited list of properties to set, and those properties
