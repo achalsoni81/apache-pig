@@ -364,7 +364,7 @@ cond : ^( OR cond cond )
      | ^( BOOL_COND expr )
 ;
 
-in_eval: ^( IN expr expr+ )
+in_eval: ^( IN ( ^( IN_LHS expr ) ^( IN_RHS expr ) )+ )
 ;
 
 func_eval: ^( FUNC_EVAL func_name real_arg* ) | ^( INVOKER_FUNC_EVAL func_name IDENTIFIER real_arg* )
@@ -423,7 +423,7 @@ pound_proj : ^( POUND ( QUOTEDSTRING | NULL ) )
 bin_expr : ^( BIN_EXPR cond expr expr )
 ;
 
-case_expr: ^( CASE_EXPR expr+ )
+case_expr: ^( CASE_EXPR ( ^( CASE_EXPR_LHS expr ) ( ^( CASE_EXPR_RHS expr) )+ )+ )
 ;
 
 case_cond: ^( CASE_COND ^( WHEN cond+ ) ^( THEN expr+ ) )
