@@ -596,7 +596,7 @@ split_branch
    }
 ;
 
-split_otherwise : ^( OTHERWISE alias )
+split_otherwise : ^( OTHERWISE alias ALL? )
    {
        aliases.add( $alias.name );
    }

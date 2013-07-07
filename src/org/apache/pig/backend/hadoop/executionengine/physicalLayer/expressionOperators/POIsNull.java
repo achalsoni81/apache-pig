@@ -76,7 +76,9 @@ public class POIsNull extends UnaryComparisonOperator {
         case DataType.TUPLE:
         case DataType.BAG:
             res = expr.getNext(operandType);
-            if(res.returnStatus == POStatus.STATUS_OK) {
+            if( res.returnStatus == POStatus.STATUS_NULL) {
+                res.result = true;
+            } else if(res.returnStatus == POStatus.STATUS_OK) {
                 if (res.result == null) {
                     res.result = true;
                 } else {

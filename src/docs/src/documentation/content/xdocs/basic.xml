@@ -7557,7 +7557,7 @@ e = sample d 1000/num_rows;
    <table>
       <tr> 
             <td>
-               <p>SPLIT alias INTO alias IF expression, alias IF expression [, alias IF expression …] [, alias OTHERWISE];</p>
+               <p>SPLIT alias INTO alias IF expression, alias IF expression [, alias IF expression …] [, alias OTHERWISE [ALL] ];</p>
             </td>
          </tr> 
    </table></section>
@@ -7597,12 +7597,16 @@ e = sample d 1000/num_rows;
                <p>An expression.</p>
             </td>
          </tr> 
-           <tr>
+         <tr>
             <td>
-               <p>OTHERWISE</p>
+               <p>OTHERWISE [ALL]</p>
             </td>
             <td>
-               <p>Optional keyword. Designates a default relation.</p>
+               <p>
+               Optional keyword. Designates a default relation. If ALL is specified, all the
+               records including nulls are stored in the default relation; otherwise, nulls
+               are discarded.
+               </p>
             </td>
          </tr>
    </table></section>
