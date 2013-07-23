@@ -278,4 +278,57 @@ public class TestUnion {
         assertEquals(2, recordCount);
 
     }
+    @Test
+    public void testCastingAfterUnionWithMultipleLoader() throws Exception {
+        File f1 = Util.createInputFile("tmp", "i1.txt", new String[] {"1","2","3"});
+        File f2 = Util.createInputFile("tmp", "i2.txt", new String[] {"a","b","c"});
+
+        PigServer ps = new PigServer(ExecType.LOCAL, new Properties());
+        ps.registerQuery("A = load '" + f1.getAbsolutePath() + "' as (a:bytearray);");
+        ps.registerQuery("B = load '" + f2.getAbsolutePath() + "' using TextLoader() as (b:bytearray);");
+        ps.registerQuery("C = union onschema A,B;");
+        ps.registerQuery("D = foreach C generate (int)a as a,(chararray)b as b;");
+        // 'a' is coming from A and 'b' is coming from B; No overlaps.
+
+        Schema dumpSchema = ps.dumpSchema("D");
+        Schema expected = new Schema ();
+        expected.add(new Schema.FieldSchema("a", DataType.INTEGER));
+        expected.add(new Schema.FieldSchema("b", DataType.CHARARRAY));
+        assertEquals(expected, dumpSchema);
+
+        Iterator<Tuple> itr = ps.openIterator("D");
+        int recordCount = 0;
+        while(itr.next() != null)
+            ++recordCount;
+        assertEquals(6, recordCount);
+
+    }
+
+    @Test
+    public void testCastingAfterUnionWithMultipleLoader2() throws Exception {
+        // A bit more complicated pattern
+        File f1 = Util.createInputFile("tmp", "i1.txt", new String[] {"b","c", "1", "3"});
+        File f2 = Util.createInputFile("tmp", "i2.txt", new String[] {"a","b","c"});
+        File f3 = Util.createInputFile("tmp", "i3.txt", new String[] {"1","2","3"});
+
+        PigServer ps = new PigServer(ExecType.LOCAL, new Properties());
+        ps.registerQuery("A = load '" + f1.getAbsolutePath() + "' as (a:bytearray);"); // Using PigStorage()
+        ps.registerQuery("B = load '" + f2.getAbsolutePath() + "' using TextLoader() as (i:bytearray);");
+        ps.registerQuery("C = load '" + f3.getAbsolutePath() + "' using TextLoader() as (i:bytearray);");
+        ps.registerQuery("B2 = join B by i, A by a;");              //{A::a: bytearray,B::i: bytearray}
+        ps.registerQuery("B3 = foreach B2 generate a, B::i as i;"); //{A::a: bytearray,i: bytearray}
+        ps.registerQuery("C2 = join C by i, A by a;");              //{A::a: bytearray,C::i: bytearray}
+        ps.registerQuery("C3 = foreach C2 generate a, C::i as i;"); //{A::a: bytearray,i: bytearray}
+        ps.registerQuery("D = union onschema B3,C3;");              // {A::a: bytearray,i: bytearray}
+        ps.registerQuery("E = foreach D generate (chararray) a, (chararray) i;");//{A::a: chararray,i: chararray}
+        // 'a' is coming from a single load in A through B3 and C3
+        // 'i' is coming from multiple loads B and C but still from the same loader.
+        Iterator<Tuple> itr = ps.openIterator("E");
+        int recordCount = 0;
+        while(itr.next() != null)
+            ++recordCount;
+        assertEquals(4, recordCount);
+
+    }
+
 }

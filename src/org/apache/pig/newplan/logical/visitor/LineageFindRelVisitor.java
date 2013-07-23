@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.pig.FuncSpec;
 import org.apache.pig.PigException;
@@ -421,7 +422,29 @@ public class LineageFindRelVisitor extends LogicalRelationalNodesVisitor{
         LogicalSchema schema = relOp.getSchema();
         if(schema != null){
             for (LogicalFieldSchema logicalFieldSchema : schema.getFields()) {
-                addUidLoadFuncToMap(logicalFieldSchema.uid,rel2InputFuncMap.get(relOp));
+                Set<Long> inputs = relOp.getInputUids(logicalFieldSchema.uid);
+                if( inputs.size() == 0 ) {
+                    // uid was not changed.  
+                    // funcspec should be already set. skipping
+                    continue;
+                }
+                // For each output field, check all the fields being union-ed(bundled)
+                // together and only set the funcspec when ALL of them use the
+                // same funcspec
+                FuncSpec prevLoadFuncSpec = null, curLoadFuncSpec = null;
+                boolean allSameLoader = true;
+                for(Long inputUid: inputs) {
+                  curLoadFuncSpec = uid2LoadFuncMap.get(inputUid) ;
+                  if( prevLoadFuncSpec != null
+                      && !prevLoadFuncSpec.equals(curLoadFuncSpec) ) {
+                    allSameLoader = false;
+                    break;
+                  }
+                  prevLoadFuncSpec  = curLoadFuncSpec;
+                }
+                if( allSameLoader ) {
+                  addUidLoadFuncToMap(logicalFieldSchema.uid,curLoadFuncSpec);
+                }
             }
         }
     }
