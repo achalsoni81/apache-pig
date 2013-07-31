@@ -50,6 +50,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FsShell;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.JobClient;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.JobID;
@@ -215,8 +216,6 @@ public class GruntParser extends PigScriptParser {
     {
         mPigServer = pigServer;
 
-        mDfs = mPigServer.getPigContext().getDfs();
-        mLfs = mPigServer.getPigContext().getLfs();
         mConf = mPigServer.getPigContext().getProperties();
         shell = new FsShell(ConfigurationUtil.toConfiguration(mConf));
 
@@ -633,20 +632,21 @@ public class GruntParser extends PigScriptParser {
 
             try {
                 byte buffer[] = new byte[65536];
-                ElementDescriptor dfsPath = mDfs.asElement(path);
+                DataStorage dfs = new HDataStorage(new Path(path).toUri(), mConf);
+                ElementDescriptor dfsPath = dfs.asElement(path);
                 int rc;
 
                 if (!dfsPath.exists())
                     throw new IOException("Directory " + path + " does not exist.");
 
-                if (mDfs.isContainer(path)) {
+                if (dfs.isContainer(path)) {
                     ContainerDescriptor dfsDir = (ContainerDescriptor) dfsPath;
                     Iterator<ElementDescriptor> paths = dfsDir.iterator();
 
                     while (paths.hasNext()) {
                         ElementDescriptor curElem = paths.next();
 
-                        if (mDfs.isContainer(curElem.toString())) {
+                        if (dfs.isContainer(curElem.toString())) {
                             continue;
                         }
 
@@ -676,32 +676,34 @@ public class GruntParser extends PigScriptParser {
     @Override
     protected void processCD(String path) throws IOException
     {
+        // cd assumes the default file system. i.e. s3 path is not supported.
+        HDataStorage dfs = (HDataStorage)mPigServer.getPigContext().getDfs();
         ContainerDescriptor container;
         if(mExplain == null) { // process only if not in "explain" mode
             try {
                 if (path == null) {
-                    container = mDfs.asContainer(((HDataStorage)mDfs).getHFS().getHomeDirectory().toString());
-                    mDfs.setActiveContainer(container);
+                    container = dfs.asContainer(dfs.getHFS().getHomeDirectory().toString());
+                    dfs.setActiveContainer(container);
                 }
                 else
                 {
-                    container = mDfs.asContainer(path);
+                    container = dfs.asContainer(path);
 
                     if (!container.exists()) {
                         throw new IOException("Directory " + path + " does not exist.");
                     }
 
-                    if (!mDfs.isContainer(path)) {
+                    if (!dfs.isContainer(path)) {
                         throw new IOException(path + " is not a directory.");
                     }
 
-                    mDfs.setActiveContainer(container);
+                    dfs.setActiveContainer(container);
                 }
             }
             catch (DataStorageException e) {
                 throw new IOException("Failed to change working directory to " +
-                                      ((path == null) ? (((HDataStorage)mDfs).getHFS().getHomeDirectory().toString())
-                                                         : (path)), e);
+                                      ((path == null) ? (dfs.getHFS().getHomeDirectory().toString())
+                                                      : (path)), e);
             }
         } else {
             log.warn("'cd' statement is ignored while processing 'explain -script' or '-check'");
@@ -807,28 +809,29 @@ public class GruntParser extends PigScriptParser {
     protected void processLS(String path) throws IOException
     {
         if(mExplain == null) { // process only if not in "explain" mode
+            DataStorage dfs = new HDataStorage(new Path(path).toUri(), mConf);
             try {
                 ElementDescriptor pathDescriptor;
 
                 if (path == null) {
-                    pathDescriptor = mDfs.getActiveContainer();
+                    pathDescriptor = dfs.getActiveContainer();
                 }
                 else {
-                    pathDescriptor = mDfs.asElement(path);
+                    pathDescriptor = dfs.asElement(path);
                 }
 
                 if (!pathDescriptor.exists()) {
                     throw new IOException("File or directory " + path + " does not exist.");
                 }
 
-                if (mDfs.isContainer(pathDescriptor.toString())) {
+                if (dfs.isContainer(pathDescriptor.toString())) {
                     ContainerDescriptor container = (ContainerDescriptor) pathDescriptor;
                     Iterator<ElementDescriptor> elems = container.iterator();
 
                     while (elems.hasNext()) {
                         ElementDescriptor curElem = elems.next();
 
-                        if (mDfs.isContainer(curElem.toString())) {
+                        if (dfs.isContainer(curElem.toString())) {
                                System.out.println(curElem.toString() + "\t<dir>");
                         } else {
                             printLengthAndReplication(curElem);
@@ -861,7 +864,8 @@ public class GruntParser extends PigScriptParser {
     protected void processPWD() throws IOException
     {
         if(mExplain == null) { // process only if not in "explain" mode
-            System.out.println(mDfs.getActiveContainer().toString());
+            DataStorage dfs = mPigServer.getPigContext().getDfs();
+            System.out.println(dfs.getActiveContainer().toString());
         } else {
             log.warn("'pwd' statement is ignored while processing 'explain -script' or '-check'");
         }
@@ -926,8 +930,10 @@ public class GruntParser extends PigScriptParser {
             executeBatch();
 
             try {
-                ElementDescriptor srcPath = mDfs.asElement(src);
-                ElementDescriptor dstPath = mDfs.asElement(dst);
+                DataStorage srcDfs = new HDataStorage(new Path(src).toUri(), mConf);
+                DataStorage dstDfs = new HDataStorage(new Path((dst)).toUri(), mConf);
+                ElementDescriptor srcPath = srcDfs.asElement(src);
+                ElementDescriptor dstPath = dstDfs.asElement(dst);
 
                 if (!srcPath.exists()) {
                     throw new IOException("File or directory " + src + " does not exist.");
@@ -951,8 +957,10 @@ public class GruntParser extends PigScriptParser {
             executeBatch();
 
             try {
-                ElementDescriptor srcPath = mDfs.asElement(src);
-                ElementDescriptor dstPath = mDfs.asElement(dst);
+                DataStorage srcDfs = new HDataStorage(new Path(src).toUri(), mConf);
+                DataStorage dstDfs = new HDataStorage(new Path((dst)).toUri(), mConf);
+                ElementDescriptor srcPath = srcDfs.asElement(src);
+                ElementDescriptor dstPath = dstDfs.asElement(dst);
 
                 srcPath.copy(dstPath, mConf, false);
             }
@@ -972,8 +980,8 @@ public class GruntParser extends PigScriptParser {
             executeBatch();
 
             try {
-                ElementDescriptor srcPath = mDfs.asElement(src);
-                ElementDescriptor dstPath = mLfs.asElement(dst);
+                ElementDescriptor srcPath = new HDataStorage(new Path(src).toUri(), mConf).asElement(src);
+                ElementDescriptor dstPath = mPigServer.getPigContext().getLfs().asElement(dst);
 
                 srcPath.copy(dstPath, false);
             }
@@ -993,8 +1001,8 @@ public class GruntParser extends PigScriptParser {
             executeBatch();
 
             try {
-                ElementDescriptor srcPath = mLfs.asElement(src);
-                ElementDescriptor dstPath = mDfs.asElement(dst);
+                ElementDescriptor srcPath = mPigServer.getPigContext().getLfs().asElement(src);
+                ElementDescriptor dstPath = new HDataStorage(new Path(dst).toUri(), mConf).asElement(dst);
 
                 srcPath.copy(dstPath, false);
             }
@@ -1010,7 +1018,8 @@ public class GruntParser extends PigScriptParser {
     protected void processMkdir(String dir) throws IOException
     {
         if(mExplain == null) { // process only if not in "explain" mode
-            ContainerDescriptor dirDescriptor = mDfs.asContainer(dir);
+            DataStorage dfs = new HDataStorage(new Path(dir).toUri(), mConf);
+            ContainerDescriptor dirDescriptor = dfs.asContainer(dir);
             dirDescriptor.create();
         } else {
             log.warn("'mkdir' statement is ignored while processing 'explain -script' or '-check'");
@@ -1037,8 +1046,8 @@ public class GruntParser extends PigScriptParser {
     protected void processRemove(String path, String options ) throws IOException
     {
         if(mExplain == null) { // process only if not in "explain" mode
-
-            ElementDescriptor dfsPath = mDfs.asElement(path);
+            DataStorage dfs = new HDataStorage(new Path(path).toUri(), mConf);
+            ElementDescriptor dfsPath = dfs.asElement(path);
             executeBatch();
 
             if (!dfsPath.exists()) {
@@ -1257,8 +1266,6 @@ public class GruntParser extends PigScriptParser {
     }
 
     private PigServer mPigServer;
-    private DataStorage mDfs;
-    private DataStorage mLfs;
     private Properties mConf;
     private JobConf mJobConf;
     private boolean mDone;
