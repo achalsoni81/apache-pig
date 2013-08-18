@@ -55,7 +55,7 @@ import org.junit.Test;
  * Test the logical optimizer.
  */
 public class TestNewPlanPushDownForeachFlatten {
-    PigContext pc = new PigContext(ExecType.LOCAL, new Properties());
+    PigContext pc = null;
 
     /**
      * 
@@ -1142,6 +1142,7 @@ public class TestNewPlanPushDownForeachFlatten {
     }
 
     private LogicalPlan migrateAndOptimizePlanWithPruning(String query) throws Exception {
+    	pc = new PigContext(ExecType.LOCAL, new Properties());
         PigServer pigServer = new PigServer( pc );
         LogicalPlan newLogicalPlan = Util.buildLp(pigServer, query);
         PlanOptimizer optimizer = new MyPlanOptimizerWithPruning( newLogicalPlan, 3 );

@@ -50,9 +50,10 @@ import org.junit.Test;
 
 public class TestNewPlanColumnPrune {
     LogicalPlan plan = null;
-    PigContext pc = new PigContext(ExecType.LOCAL, new Properties());
+    PigContext pc = null;
 
     private LogicalPlan buildPlan(String query) throws Exception{
+    	pc =  new PigContext(ExecType.LOCAL, new Properties());
         PigServer pigServer = new PigServer( pc );
         return Util.buildLp(pigServer, query);
     }

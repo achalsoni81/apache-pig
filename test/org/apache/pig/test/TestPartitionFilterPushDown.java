@@ -71,7 +71,7 @@ import org.junit.Test;
  * implements {@link LoadMetadata})
  */
 public class TestPartitionFilterPushDown {
-    static PigContext pc = new PigContext(ExecType.LOCAL, new Properties());
+    static PigContext pc = null;
     String query = "a = load 'foo' as (srcid:int, mrkt:chararray, dstid:int, name:chararray, " +
     		"age:int, browser:map[], location:tuple(country:chararray, zip:int));";
 
@@ -240,6 +240,7 @@ public class TestPartitionFilterPushDown {
             "('srcid, mrkt, dstid, name, age', 'srcid, name');" +
             "b = filter a by (srcid < 20 and age < 30) or (name == 'foo' and age > 40);" +
             "store b into 'output';";
+        pc = new PigContext(ExecType.LOCAL, new Properties());
         LogicalPlan plan = buildPlan(new PigServer(pc), query);
 
         Rule rule = new PartitionFilterOptimizer("test");

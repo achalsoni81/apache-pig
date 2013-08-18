@@ -32,6 +32,7 @@ import junit.framework.Assert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pig.ExecType;
+import org.apache.pig.PigException;
 import org.apache.pig.PigServer;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
@@ -89,7 +90,7 @@ public class TestProjectRange  {
     }
 
     @Before
-    public void setup() throws ExecException{
+    public void setup() throws PigException{
         if(execType == MAPREDUCE) {
             pigServer = new PigServer(MAPREDUCE, cluster.getProperties());
         } else {

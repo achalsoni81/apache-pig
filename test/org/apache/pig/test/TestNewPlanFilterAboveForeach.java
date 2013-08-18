@@ -48,7 +48,7 @@ import org.junit.Test;
 
 
 public class TestNewPlanFilterAboveForeach {
-    PigContext pc = new PigContext(ExecType.LOCAL, new Properties());
+    PigContext pc = null;
     
     @Test
     public void testSimple() throws Exception {

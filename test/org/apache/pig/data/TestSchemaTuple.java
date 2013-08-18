@@ -49,6 +49,7 @@ import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.pig.ExecType;
 import org.apache.pig.PigConfiguration;
+import org.apache.pig.PigException;
 import org.apache.pig.PigServer;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.backend.hadoop.datastorage.ConfigurationUtil;
@@ -81,7 +82,11 @@ public class TestSchemaTuple {
 
         conf = ConfigurationUtil.toConfiguration(props);
 
-        pigContext = new PigContext(ExecType.LOCAL, props);
+        try {
+			pigContext = new PigContext(ExecType.LOCAL, props);
+		} catch (PigException e) {
+			e.printStackTrace();
+		}
     }
 
     @Test
@@ -131,40 +136,40 @@ public class TestSchemaTuple {
         udfSchema = Utils.getSchemaFromString(
                 "int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))");
@@ -260,40 +265,40 @@ public class TestSchemaTuple {
         udfSchema = Utils.getSchemaFromString(
                 "int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
-                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger)),"
+                +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))"
                 +"int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger,"
                 +"(int, long, chararray, boolean, bytearray, float, double, datetime, bigdecimal, biginteger))");

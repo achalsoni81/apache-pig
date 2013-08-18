@@ -145,13 +145,7 @@ public class JsonStorage extends StoreFunc implements StoreMetadata {
         
         ResourceFieldSchema[] fields = schema.getFields();
         for (int i = 0; i < fields.length; i++) {
-            int tupleLength = t.size();
-            //write col if exists in tuple, null otherwise
-            if (i < tupleLength) {
-                writeField(json, fields[i], t.get(i));
-            } else {
-                writeField(json, fields[i], null);
-            }
+            writeField(json, fields[i], t.get(i));
         }
         json.writeEndObject();
         json.close();

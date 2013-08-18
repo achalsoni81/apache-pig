@@ -57,6 +57,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.pig.PigRunner.ReturnCode;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.backend.hadoop.datastorage.ConfigurationUtil;
+import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MRExecType;
 import org.apache.pig.classification.InterfaceAudience;
 import org.apache.pig.classification.InterfaceStability;
 import org.apache.pig.impl.PigContext;
@@ -211,12 +212,7 @@ static int run(String args[], PigProgressNotificationListener listener) {
 
         ExecMode mode = ExecMode.UNKNOWN;
         String file = null;
-        String engine = null;
-        ExecType execType = ExecType.MAPREDUCE ;
-        String execTypeString = properties.getProperty("exectype");
-        if(execTypeString!=null && execTypeString.length()>0){
-            execType = ExecType.fromString(execTypeString);
-        }
+        String engine = null;        
 
         // set up client side system properties in UDF context
         UDFContext.getUDFContext().setClientSystemProps(properties);
@@ -328,13 +324,8 @@ static int run(String args[], PigProgressNotificationListener listener) {
                 break;
 
             case 'x':
-                try {
-                    execType = ExecType.fromString(opts.getValStr());
-                    } catch (IOException e) {
-                        throw new RuntimeException("ERROR: Unrecognized exectype.", e);
-                    }
-                break;
-
+             properties.setProperty("exectype", opts.getValStr());
+       
             case 'P':
             {
                 InputStream inputStream = null;
@@ -361,8 +352,9 @@ static int run(String args[], PigProgressNotificationListener listener) {
                      }
             }
         }
+        
         // create the context with the parameter
-        PigContext pigContext = new PigContext(execType, properties);
+        PigContext pigContext = new PigContext(properties);
 
         // create the static script state object
         String commandLine = LoadFunc.join((AbstractList<String>)Arrays.asList(args), " ");
@@ -460,7 +452,6 @@ static int run(String args[], PigProgressNotificationListener listener) {
             pigContext.getProperties().setProperty(PigContext.JOB_NAME,
                                                    "PigLatin:" +new File(file).getName()
             );
-
             if (!debug) {
                 new File(substFile).deleteOnExit();
             }

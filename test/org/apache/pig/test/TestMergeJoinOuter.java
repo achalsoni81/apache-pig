@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.pig.ExecType;
+import org.apache.pig.PigException;
 import org.apache.pig.PigServer;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceOper;
@@ -61,7 +62,7 @@ public class TestMergeJoinOuter {
     private PigServer pigServer;
     private static MiniCluster cluster = MiniCluster.buildCluster();
     
-    public TestMergeJoinOuter() throws ExecException{
+    public TestMergeJoinOuter() throws PigException{
         
         Properties props = cluster.getProperties();
         props.setProperty("mapred.map.max.attempts", "1");

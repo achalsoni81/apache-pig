@@ -19,6 +19,8 @@
 package org.apache.pig;
 
 import java.io.Serializable;
+import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.LocalExecType;
+import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MRExecType;
 
 /**
  * The type of query execution
@@ -31,7 +33,15 @@ public enum ExecType implements Serializable {
     /**
      * Use the Hadoop Map/Reduce framework
      */
-    MAPREDUCE;
+    MAPREDUCE,
+    /**
+     * Use a custom framework
+     */
+   CUSTOM
+   ;
+    
+    public static final LocalExecType localExecType = new LocalExecType();
+    public static final MRExecType MRExecType = new MRExecType();
 
     /**
      * Given a string, determine the exec type.
@@ -51,4 +61,24 @@ public enum ExecType implements Serializable {
             }
         }
     }
+    
+    
+    public static org.apache.pig.backend.executionengine.ExecType getNewExecType(ExecType execType) throws PigException {
+    
+      switch (execType) {
+         case LOCAL:
+          return localExecType;
+         case MAPREDUCE:
+         {
+           return MRExecType;
+         }
+         default:
+         {
+          int errCode = 2040;
+             String msg = "Using custom ExecutionEngine. Use new ExecType interface instead.";
+             throw new PigException(msg, errCode);
+     }
+  
+    }
+}
 }

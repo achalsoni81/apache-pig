@@ -26,6 +26,7 @@ import java.util.Properties;
 
 import org.apache.pig.ExecType;
 import org.apache.pig.PigConfiguration;
+import org.apache.pig.PigException;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.plans.MROperPlan;
 import org.apache.pig.backend.hadoop.executionengine.physicalLayer.PhysicalOperator;
@@ -42,7 +43,7 @@ public class TestPOPartialAggPlan  {
     PigContext pc;
 
     @Before
-    public void setUp() throws ExecException {
+    public void setUp() throws PigException {
         pc = new PigContext(ExecType.LOCAL, new Properties());
         pc.connect();
     }

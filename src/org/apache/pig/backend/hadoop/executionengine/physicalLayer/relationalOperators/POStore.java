@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.pig.PigException;
 import org.apache.pig.SortInfo;
+import org.apache.pig.StoreFunc;
 import org.apache.pig.StoreFuncInterface;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReducePOStoreImpl;

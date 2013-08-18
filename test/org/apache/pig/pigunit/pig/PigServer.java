@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.pig.ExecType;
+import org.apache.pig.PigException;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.impl.util.Utils;
 
@@ -31,11 +32,11 @@ import org.apache.pig.impl.util.Utils;
  */
 public class PigServer extends org.apache.pig.PigServer {
 
-  public PigServer(ExecType execType, Properties properties) throws ExecException {
+  public PigServer(ExecType execType, Properties properties) throws PigException {
     super(execType, properties);
   }
 
-  public PigServer(ExecType execType) throws ExecException {
+  public PigServer(ExecType execType) throws IOException {
     super(execType);
   }
 

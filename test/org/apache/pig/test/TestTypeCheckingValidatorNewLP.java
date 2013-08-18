@@ -129,7 +129,7 @@ import org.junit.Test;
 
 public class TestTypeCheckingValidatorNewLP {
 
-    PigContext pc = new PigContext(ExecType.LOCAL, new Properties());
+    PigContext pc = null;
     private static final String CAST_LOAD_NOT_FOUND =
         "Cannot resolve load function to use for casting from bytearray";
 
@@ -139,6 +139,7 @@ public class TestTypeCheckingValidatorNewLP {
      */
     @Before
     public void setUp() throws Exception {
+    	pc = new PigContext(ExecType.LOCAL, new Properties());
         pc.connect();
     }
 

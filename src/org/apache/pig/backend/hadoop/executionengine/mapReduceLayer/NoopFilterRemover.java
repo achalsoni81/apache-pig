@@ -42,11 +42,11 @@ import org.apache.pig.backend.hadoop.executionengine.physicalLayer.plans.PhyPlan
  * The condition we look for is POFilters with a constant boolean
  * (true) expression as it's plan. 
  */
-class NoopFilterRemover extends MROpPlanVisitor {
+public class NoopFilterRemover extends MROpPlanVisitor {
     
     private Log log = LogFactory.getLog(getClass());
     
-    NoopFilterRemover(MROperPlan plan) {
+    public NoopFilterRemover(MROperPlan plan) {
         super(plan, new DependencyOrderWalker<MapReduceOper, MROperPlan>(plan));
     }
 

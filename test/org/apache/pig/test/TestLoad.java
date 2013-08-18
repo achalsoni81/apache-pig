@@ -326,7 +326,7 @@ public class TestLoad {
             if(noConversionExpected) {
                 assertEquals(expected, p);
             } else  {
-                String protocol = pc.getExecType() == ExecType.MAPREDUCE ? "hdfs" : "file";
+                String protocol = pc.getExecType().isLocal() ? "hdfs" : "file";
                 // regex : A word character, i.e. [a-zA-Z_0-9] or '-' followed by ':' then any characters 
                 String regex = "[\\-\\w:\\.]";
                 assertTrue(p.matches(".*" + protocol + "://" + regex + "*.*"));

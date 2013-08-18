@@ -675,13 +675,11 @@ public class Util {
 
     public static String generateURI(String filename, PigContext context)
             throws IOException {
-        if (context.getExecType() == ExecType.MAPREDUCE) {
+        if (!context.getExecType().isLocal()) {
             return FileLocalizer.hadoopify(filename, context);
-        } else if (context.getExecType() == ExecType.LOCAL) {
-            return filename;
         } else {
-            throw new IllegalStateException("ExecType: " + context.getExecType());
-        }
+            return filename;
+        } 
     }
 
     public static Object getPigConstant(String pigConstantAsString) throws ParserException {

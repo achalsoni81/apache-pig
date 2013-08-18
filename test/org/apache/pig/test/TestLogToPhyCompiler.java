@@ -83,7 +83,7 @@ public class TestLogToPhyCompiler {
     final int MAX_RANGE = 10;
     
     Random r = new Random();
-    PigContext pc = new PigContext(ExecType.LOCAL, new Properties());
+    PigContext pc = null;
 
     private boolean generate = false;
     
@@ -92,6 +92,7 @@ public class TestLogToPhyCompiler {
     
     @Before
     public void setUp() throws Exception {
+    	pc = new PigContext(ExecType.LOCAL, new Properties());
     	pigServer = new PigServer( ExecType.LOCAL, new Properties() );
         pc.connect();
     }

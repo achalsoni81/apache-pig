@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.pig.ExecType;
+import org.apache.pig.PigException;
 import org.apache.pig.PigServer;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.backend.executionengine.ExecJob;
@@ -49,12 +50,14 @@ public class TestSecondarySort {
 
     static PigContext pc;
     static {
-        pc = new PigContext(ExecType.MAPREDUCE, MiniCluster.buildCluster().getProperties());
         try {
+            pc = new PigContext(ExecType.MAPREDUCE, MiniCluster.buildCluster().getProperties());
             pc.connect();
         } catch (ExecException e) {
             throw new RuntimeException(e);
-        }
+        } catch (PigException e) {
+            throw new RuntimeException(e);
+		}
     }
 
     @AfterClass

@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.pig.PigException;
 import org.apache.pig.PigServer;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.DataType;
@@ -59,7 +60,7 @@ public class TestProjectStarRangeInUdf  {
     }
 
     @Before
-    public void setup() throws ExecException{
+    public void setup() throws PigException{
         pigServer = new PigServer(LOCAL);
     }
 

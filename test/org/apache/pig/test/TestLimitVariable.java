@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.pig.ExecType;
+import org.apache.pig.PigException;
 import org.apache.pig.PigServer;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
@@ -49,7 +50,7 @@ public class TestLimitVariable {
     }
 
     @Before
-    public void setUp() throws ExecException {
+    public void setUp() throws PigException {
         pigServer = new PigServer(ExecType.MAPREDUCE, cluster.getProperties());
     }
 

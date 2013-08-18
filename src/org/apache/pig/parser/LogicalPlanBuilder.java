@@ -19,7 +19,6 @@
 package org.apache.pig.parser;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -29,18 +28,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.antlr.runtime.IntStream;
 import org.antlr.runtime.RecognitionException;
-import org.apache.pig.ExecType;
 import org.apache.pig.FuncSpec;
 import org.apache.pig.LoadFunc;
 import org.apache.pig.PigConfiguration;
 import org.apache.pig.StoreFuncInterface;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.backend.hadoop.datastorage.ConfigurationUtil;
+import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.LocalExecType;
 import org.apache.pig.builtin.CubeDimensions;
 import org.apache.pig.builtin.InvokerGenerator;
 import org.apache.pig.builtin.PigStorage;
@@ -54,8 +50,6 @@ import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.PigContext;
 import org.apache.pig.impl.io.FileSpec;
 import org.apache.pig.impl.logicalLayer.FrontendException;
-import org.apache.pig.impl.logicalLayer.schema.Schema;
-import org.apache.pig.impl.logicalLayer.schema.Schema.FieldSchema;
 import org.apache.pig.impl.plan.NodeIdGenerator;
 import org.apache.pig.impl.plan.OperatorKey;
 import org.apache.pig.impl.streaming.StreamingCommand;
@@ -103,8 +97,6 @@ import org.apache.pig.newplan.logical.rules.OptimizerUtils;
 import org.apache.pig.newplan.logical.visitor.ProjStarInUdfExpander;
 import org.apache.pig.newplan.logical.visitor.ProjectStarExpander;
 
-import com.google.common.collect.Lists;
-
 public class LogicalPlanBuilder {
 
     private LogicalPlan plan = new LogicalPlan();
@@ -142,7 +134,7 @@ public class LogicalPlanBuilder {
     }
 
     LogicalPlanBuilder(IntStream input) throws ExecException {
-        pigContext = new PigContext( ExecType.LOCAL, new Properties() );
+        pigContext = new PigContext( new LocalExecType(), new Properties() );
         pigContext.connect();
         this.scope = "test";
         this.fileNameMap = new HashMap<String, String>();
@@ -1193,7 +1185,7 @@ public class LogicalPlanBuilder {
 
     void setParallel(LogicalRelationalOperator op, Integer parallel) {
         if( parallel != null ) {
-            op.setRequestedParallelism( pigContext.getExecType() == ExecType.LOCAL ? 1 : parallel );
+            op.setRequestedParallelism( pigContext.getExecType() instanceof LocalExecType ? 1 : parallel );
         }
     }
 

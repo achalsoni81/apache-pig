@@ -71,7 +71,7 @@ import org.apache.pig.backend.hadoop.executionengine.physicalLayer.plans.PhyPlan
  * this case.
  *
  */
-class NoopStoreRemover extends MROpPlanVisitor {
+public class NoopStoreRemover extends MROpPlanVisitor {
     
     private Log log = LogFactory.getLog(getClass());
 
@@ -79,7 +79,7 @@ class NoopStoreRemover extends MROpPlanVisitor {
     private List<RemovableStore> removalQ;
     private List<POStore> storeQ;
     
-    NoopStoreRemover(MROperPlan plan) {
+    public NoopStoreRemover(MROperPlan plan) {
         super(plan, new DependencyOrderWalker<MapReduceOper, MROperPlan>(plan));
         replacementMap = new HashMap<String, FileSpec>();
     }

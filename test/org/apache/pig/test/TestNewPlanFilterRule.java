@@ -62,7 +62,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class TestNewPlanFilterRule {
-    PigContext pc = new PigContext(ExecType.LOCAL, new Properties());
+    PigContext pc = null;
 
     LogicalPlan plan = null;
     LogicalRelationalOperator load1 = null;
@@ -571,6 +571,7 @@ public class TestNewPlanFilterRule {
     }
 
     private LogicalPlan migrateAndOptimizePlan(String query) throws Exception {
+    	pc = new PigContext(ExecType.LOCAL, new Properties());
     	PigServer pigServer = new PigServer(pc);
         LogicalPlan newLogicalPlan = Util.buildLp(pigServer, query);
         PlanOptimizer optimizer = new NewPlanOptimizer( newLogicalPlan, 3 );

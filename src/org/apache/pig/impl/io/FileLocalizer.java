@@ -39,7 +39,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.pig.ExecType;
+import org.apache.pig.backend.executionengine.ExecType;
 import org.apache.pig.PigException;
 import org.apache.pig.backend.datastorage.ContainerDescriptor;
 import org.apache.pig.backend.datastorage.DataStorage;
@@ -146,7 +146,7 @@ public class FileLocalizer {
     static String checkDefaultPrefix(ExecType execType, String fileSpec) {
         if (fileSpec.startsWith(LOCAL_PREFIX))
             return fileSpec;
-        return (execType == ExecType.LOCAL ? LOCAL_PREFIX : "") + fileSpec;
+        return (execType.isLocal() ? LOCAL_PREFIX : "") + fileSpec;
     }
 
     /**

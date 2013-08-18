@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.pig.ExecType;
+import org.apache.pig.PigException;
 import org.apache.pig.PigServer;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MapReduceOper;
@@ -49,13 +50,15 @@ public class TestSampleOptimizer {
     static PigContext pc;
     static PigServer pigServer;
     static{
-        pc = new PigContext(ExecType.MAPREDUCE,MiniCluster.buildCluster().getProperties());
         try {
+            pc = new PigContext(ExecType.MAPREDUCE,MiniCluster.buildCluster().getProperties());
             pc.connect();
             pigServer = new PigServer( pc );
         } catch (ExecException e) {
             e.printStackTrace();
-        }
+        } catch (PigException e) {
+			e.printStackTrace();
+		}
     }
 
     @AfterClass

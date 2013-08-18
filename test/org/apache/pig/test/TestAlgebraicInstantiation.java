@@ -28,6 +28,7 @@ import java.util.Iterator;
 import org.apache.pig.Algebraic;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.ExecType;
+import org.apache.pig.PigException;
 import org.apache.pig.PigServer;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.data.Tuple;
@@ -42,7 +43,7 @@ public class TestAlgebraicInstantiation {
     private PigServer pig;
     private File tmpFile;
     
-    public TestAlgebraicInstantiation() throws ExecException {
+    public TestAlgebraicInstantiation() throws ExecException, PigException {
         pig = new PigServer(ExecType.MAPREDUCE, cluster.getProperties());
     }
     

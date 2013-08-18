@@ -36,7 +36,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.pig.ExecType;
+import org.apache.pig.backend.executionengine.ExecType;
 import org.apache.pig.data.SchemaTupleClassGenerator.GenContext;
 import org.apache.pig.data.utils.StructuresHelper.Pair;
 import org.apache.pig.data.utils.StructuresHelper.SchemaKey;
@@ -111,7 +111,7 @@ public class SchemaTupleFrontend {
          */
         private void internalCopyAllGeneratedToDistributedCache() {
             LOG.info("Starting process to move generated code to distributed cacche");
-            if (pigContext.getExecType() == ExecType.LOCAL) {
+            if (pigContext.getExecType().isLocal()) {
                 String codePath = codeDir.getAbsolutePath();
                 LOG.info("Distributed cache not supported or needed in local mode. Setting key ["
                         + LOCAL_CODE_DIR + "] with code temp directory: " + codePath);

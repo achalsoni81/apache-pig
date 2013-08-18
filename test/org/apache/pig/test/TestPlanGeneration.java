@@ -26,6 +26,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.pig.ExecType;
 import org.apache.pig.Expression;
 import org.apache.pig.LoadMetadata;
+import org.apache.pig.PigException;
 import org.apache.pig.ResourceSchema;
 import org.apache.pig.ResourceStatistics;
 import org.apache.pig.backend.executionengine.ExecException;
@@ -60,7 +61,7 @@ public class TestPlanGeneration {
     static PigContext pc;
 
     @BeforeClass
-    public static void setUp() throws ExecException {
+    public static void setUp() throws PigException {
         pc = new PigContext(ExecType.LOCAL, new Properties());
         pc.connect();
     }

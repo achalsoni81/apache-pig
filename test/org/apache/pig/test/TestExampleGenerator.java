@@ -39,8 +39,8 @@ import org.junit.Test;
 
 
 public class TestExampleGenerator {
-
-    static PigContext pigContext = new PigContext(ExecType.LOCAL, new Properties());
+	
+    static PigContext pigContext;
 
     static int MAX = 100;
     static String A, B;
@@ -48,6 +48,9 @@ public class TestExampleGenerator {
     
     @BeforeClass
     public static void oneTimeSetup() throws Exception {
+    	
+    	pigContext = new PigContext(ExecType.LOCAL, new Properties());
+    	
         pigContext.connect();
 
         fileA = File.createTempFile("dataA", ".dat");

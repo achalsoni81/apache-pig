@@ -760,12 +760,12 @@ public class TestEvalPipelineLocal {
         
         // Create input file with unicode data
         File input = Util.createInputFile("tmp", "", 
-                new String[] {"wendyξ"});
+                new String[] {"wendy��"});
         pigServer.registerQuery("a = load '" + Util.encodeEscape(input.toString()) + "' using PigStorage() " +
         "as (name:chararray);");
         Iterator<Tuple> it = pigServer.openIterator("a");
         Tuple t = it.next();
-        Assert.assertEquals("wendyξ", t.get(0));
+        Assert.assertEquals("wendy��", t.get(0));
         
     }
 
@@ -1039,7 +1039,7 @@ public class TestEvalPipelineLocal {
         
         File tmpFile = File.createTempFile("test", "txt");
         PrintStream ps = new PrintStream(new FileOutputStream(tmpFile));
-        pigServer.explain("e", "dot", true, true, ps, System.out, System.out);
+        pigServer.explain("e", "dot", true, true, ps, System.out, null, null);
         ps.close();
         
         FileInputStream fis1 = new FileInputStream("test/org/apache/pig/test/data/DotFiles/explain1.dot");

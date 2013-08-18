@@ -38,6 +38,7 @@ import org.apache.pig.impl.io.FileSpec;
 import org.apache.pig.impl.util.ObjectSerializer;
 import org.apache.pig.tools.pigstats.PigStatsUtil;
 import org.apache.pig.tools.pigstats.PigStatusReporter;
+import org.apache.pig.tools.pigstats.mapreduce.MRPigStatsUtil;
 
 /**
  * A wrapper around the actual RecordReader and loadfunc - this is needed for
@@ -146,7 +147,7 @@ public class PigRecordReader extends RecordReader<Text, Tuple> {
             PigStatusReporter reporter = PigStatusReporter.getInstance();
             if (reporter != null) {
                 inputRecordCounter = reporter.getCounter(
-                        PigStatsUtil.MULTI_INPUTS_COUNTER_GROUP,
+                        MRPigStatsUtil.MULTI_INPUTS_COUNTER_GROUP,
                         counterName);
                 LOG.info("Created input record counter: " + counterName);
             } else {
@@ -228,7 +229,7 @@ public class PigRecordReader extends RecordReader<Text, Tuple> {
             (ArrayList<FileSpec>) ObjectSerializer.deserialize(
                     conf.get(PigInputFormat.PIG_INPUTS));
         String fname = inputs.get(pigSplit.getInputIndex()).getFileName();
-        return PigStatsUtil.getMultiInputsCounterName(fname, pigSplit.getInputIndex());
+        return MRPigStatsUtil.getMultiInputsCounterName(fname, pigSplit.getInputIndex());
     }
     
     /**

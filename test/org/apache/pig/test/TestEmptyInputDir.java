@@ -31,6 +31,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.pig.PigRunner;
 import org.apache.pig.tools.pigstats.JobStats;
 import org.apache.pig.tools.pigstats.PigStats;
+import org.apache.pig.tools.pigstats.mapreduce.MRJobStats;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -83,7 +84,7 @@ public class TestEmptyInputDir {
             
             // This assert fails on 205 due to MAPREDUCE-3606
             if (!Util.isHadoop205()&&!Util.isHadoop1_x())
-                assertEquals(0, js.getNumberMaps()); 
+                assertEquals(0, ((MRJobStats) js).getNumberMaps()); 
             
             FileSystem fs = cluster.getFileSystem();
             FileStatus status = fs.getFileStatus(new Path(OUTPUT_FILE));
@@ -116,7 +117,7 @@ public class TestEmptyInputDir {
             
             // This assert fails on 205 due to MAPREDUCE-3606
             if (!Util.isHadoop205()&&!Util.isHadoop1_x())
-                assertEquals(0, js.getNumberMaps()); 
+                assertEquals(0, ((MRJobStats) js).getNumberMaps()); 
             
             FileSystem fs = cluster.getFileSystem();
             FileStatus status = fs.getFileStatus(new Path(OUTPUT_FILE));
@@ -150,7 +151,7 @@ public class TestEmptyInputDir {
             
             // This assert fails on 205 due to MAPREDUCE-3606
             if (!Util.isHadoop205()&&!Util.isHadoop1_x())
-                assertEquals(0, js.getNumberMaps()); 
+                assertEquals(0, ((MRJobStats) js).getNumberMaps()); 
             
             FileSystem fs = cluster.getFileSystem();
             FileStatus status = fs.getFileStatus(new Path(OUTPUT_FILE));

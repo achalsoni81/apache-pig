@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.pig.ExecType;
+import org.apache.pig.PigException;
 import org.apache.pig.PigServer;
 import org.apache.pig.PigToStream;
 import org.apache.pig.backend.executionengine.ExecException;
@@ -50,7 +51,7 @@ public class TestStreaming {
     private PigServer pigServer;
     
     @Before
-    public void setup() throws ExecException {
+    public void setup() throws PigException {
         pigServer = new PigServer(ExecType.MAPREDUCE, cluster.getProperties());
     }
     

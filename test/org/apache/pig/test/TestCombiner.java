@@ -133,7 +133,7 @@ public class TestCombiner {
         File inputFile = File.createTempFile("test", "txt");
         inputFile.deleteOnExit();
         String inputFileName = inputFile.getAbsolutePath();
-        if (pig.getPigContext().getExecType() == ExecType.LOCAL) {
+        if (pig.getPigContext().getExecType().isLocal()) {
             PrintStream ps = new PrintStream(new FileOutputStream(inputFile));
             for (String line : inputLines) {
                 ps.println(line);

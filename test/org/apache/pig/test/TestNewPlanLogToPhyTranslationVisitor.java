@@ -85,7 +85,7 @@ import org.junit.Test;
 
 public class TestNewPlanLogToPhyTranslationVisitor {
 
-    PigContext pc = new PigContext(ExecType.LOCAL, new Properties());
+    PigContext pc = null;
     private PhysicalPlan translatePlan(OperatorPlan plan) throws IOException {
         LogToPhyTranslationVisitor visitor = new LogToPhyTranslationVisitor(plan);
         visitor.visit();
@@ -94,6 +94,7 @@ public class TestNewPlanLogToPhyTranslationVisitor {
     
     private LogicalPlan buildPlan(String query)
     throws Exception{
+    	pc = new PigContext(ExecType.LOCAL, new Properties());
         PigServer pigServer = new PigServer( pc );
     	return Util.buildLp(pigServer, query);
     }

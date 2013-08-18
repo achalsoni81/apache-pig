@@ -68,11 +68,12 @@ import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
 public class TestLogicalPlanBuilder {
-    PigContext pigContext = new PigContext(ExecType.LOCAL, new Properties());
+    PigContext pigContext = null;
     private PigServer pigServer = null;
 
     @Before
     public void setUp() throws Exception {
+    	pigContext = new PigContext(ExecType.LOCAL, new Properties());
     	pigServer = new PigServer( pigContext );
     	pigContext.connect();
     }

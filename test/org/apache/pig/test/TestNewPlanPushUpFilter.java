@@ -58,7 +58,7 @@ import org.junit.Test;
  * Test the logical optimizer.
  */
 public class TestNewPlanPushUpFilter {
-    PigContext pc = new PigContext(ExecType.LOCAL, new Properties());
+    PigContext pc = null;
 
     @Before
     public void tearDown() {
@@ -1266,6 +1266,7 @@ public class TestNewPlanPushUpFilter {
     }
 
     private LogicalPlan migrateAndOptimizePlan(String query) throws Exception {
+    	pc = new PigContext(ExecType.LOCAL, new Properties());
         PigServer pigServer = new PigServer( pc );
         LogicalPlan newLogicalPlan = Util.buildLp(pigServer, query);
         PlanOptimizer optimizer = new MyPlanOptimizer( newLogicalPlan, 3 );

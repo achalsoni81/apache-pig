@@ -117,9 +117,9 @@ public class PigTest {
    * Connects and starts if needed the PigServer.
    *
    * @return Reference to the Cluster in ThreadLocal.
-   * @throws ExecException If the PigServer can't be started.
+ * @throws IOException 
    */
-  public static Cluster getCluster() throws ExecException {
+  public static Cluster getCluster() throws IOException {
     if (cluster.get() == null) {
       if (System.getProperties().containsKey(EXEC_CLUSTER)) {
         LOG.info("Using cluster mode");

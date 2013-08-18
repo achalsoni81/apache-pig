@@ -28,6 +28,7 @@ import java.util.Properties;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.pig.ExecType;
 import org.apache.pig.FuncSpec;
+import org.apache.pig.PigException;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.backend.hadoop.datastorage.ConfigurationUtil;
 import org.apache.pig.builtin.PigStorage;
@@ -42,7 +43,7 @@ import org.apache.pig.newplan.logical.relational.LogicalPlan;
 public class TypeCheckingTestUtil {
 
     public static org.apache.pig.newplan.logical.relational.LOLoad 
-    genDummyLOLoadNewLP( org.apache.pig.newplan.logical.relational.LogicalPlan plan) throws ExecException  {
+    genDummyLOLoadNewLP( org.apache.pig.newplan.logical.relational.LogicalPlan plan) throws ExecException, PigException {
         String pigStorage = PigStorage.class.getName() ;
         PigContext pc = new PigContext(ExecType.LOCAL, new Properties());
         pc.connect();

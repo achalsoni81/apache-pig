@@ -79,7 +79,7 @@ public class TestJoin {
         if (cluster != null) cluster.shutDown();
     }
 
-    private void setUp(ExecType execType) throws ExecException {
+    private void setUp(ExecType execType) throws PigException {
         // cause a reinitialization of FileLocalizer's
         // internal state
         FileLocalizer.setInitialized(false);
@@ -518,7 +518,7 @@ public class TestJoin {
     }
 
     @Test
-    public void testMultiOuterJoinFailure() throws ExecException {
+    public void testMultiOuterJoinFailure() throws PigException {
         setUp(ExecType.LOCAL);
         String[] types = new String[] { "left", "right", "full" };
         String query = "a = load 'a.txt' as (n:chararray, a:int);\n" +
@@ -542,7 +542,7 @@ public class TestJoin {
     }
 
     @Test
-    public void testNonRegularOuterJoinFailure() throws ExecException {
+    public void testNonRegularOuterJoinFailure() throws PigException {
         setUp(ExecType.LOCAL);
         String query = "a = load 'a.txt' as (n:chararray, a:int); "+
         "b = load 'b.txt' as (n:chararray, m:chararray); ";

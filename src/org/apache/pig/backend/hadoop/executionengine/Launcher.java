@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.pig.backend.hadoop.executionengine.mapReduceLayer;
+package org.apache.pig.backend.hadoop.executionengine;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -38,6 +38,7 @@ import org.apache.hadoop.mapred.jobcontrol.JobControl;
 import org.apache.pig.FuncSpec;
 import org.apache.pig.PigException;
 import org.apache.pig.backend.executionengine.ExecException;
+import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobCreationException;
 import org.apache.pig.backend.hadoop.executionengine.physicalLayer.plans.PhysicalPlan;
 import org.apache.pig.impl.PigContext;
 import org.apache.pig.impl.plan.PlanException;
@@ -69,6 +70,8 @@ public abstract class Launcher {
     public void reset() {
 
     }
+    
+    
 
     /**
      * Method to launch pig for hadoop either for a cluster's
@@ -296,7 +299,7 @@ public abstract class Launcher {
      * @return An exception object whose string representation of printStackTrace is the input stackTrace 
      * @throws Exception
      */
-    Exception getExceptionFromString(String stackTrace) throws Exception{
+    public Exception getExceptionFromString(String stackTrace) throws Exception{
         String[] lines = stackTrace.split(newLine);
         Throwable t = getExceptionFromStrings(lines, 0);
         

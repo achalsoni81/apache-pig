@@ -31,9 +31,9 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.RawComparator;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Partitioner;
-import org.apache.pig.ExecType;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.backend.hadoop.HDataType;
+import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.MRExecType;
 import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.PigMapReduce;
 import org.apache.pig.backend.hadoop.executionengine.util.MapRedUtil;
 import org.apache.pig.data.DataBag;
@@ -111,7 +111,7 @@ public class WeightedRangePartitioner extends Partitioner<PigNullableWritable, W
         try{
             // use local file system to get the quantilesFile
             Configuration conf;
-            if (pigContext.getExecType()==ExecType.MAPREDUCE) {
+            if (!pigContext.getExecType().isLocal()) {
                 conf = new Configuration(true);
             } else {
                 conf = new Configuration(false);

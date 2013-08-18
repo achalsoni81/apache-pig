@@ -42,6 +42,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.pig.ExecType;
+import org.apache.pig.PigException;
 import org.apache.pig.PigServer;
 import org.apache.pig.ResourceSchema;
 import org.apache.pig.backend.executionengine.ExecException;
@@ -73,11 +74,13 @@ public class TestPigStorage  {
     static PigServer pig;
     static final String datadir = "build/test/tmpdata/";
 
-    PigContext pigContext = new PigContext(ExecType.LOCAL, new Properties());
+    PigContext pigContext;
     Map<String, String> fileNameMap = new HashMap<String, String>();
 
     @Before
     public void setup() throws IOException {
+    	
+    	pigContext = new PigContext(ExecType.LOCAL, new Properties());
         // some tests are in map-reduce mode and some in local - so before
         // each test, we will de-initialize FileLocalizer so that temp files
         // are created correctly depending on the ExecType in the test.
@@ -119,7 +122,7 @@ public class TestPigStorage  {
     }
 
     @Test
-    public void testBlockBoundary() throws ExecException {
+    public void testBlockBoundary() throws PigException {
 
         // This tests PigStorage loader with records exactly
         // on the boundary of the file blocks.

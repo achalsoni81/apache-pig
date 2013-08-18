@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.*;
 
 import org.apache.pig.ExecType;
+import org.apache.pig.PigException;
 import org.apache.pig.PigServer;
 import org.apache.pig.newplan.logical.optimizer.LogicalPlanOptimizer;
 import org.apache.pig.newplan.logical.relational.LOLoad;
@@ -47,12 +48,13 @@ import org.junit.Test;
 public class TestOptimizeLimit {
     final String FILE_BASE_LOCATION = "test/org/apache/pig/test/data/DotFiles/" ;
     static final int MAX_SIZE = 100000;
-    PigContext pc = new PigContext( ExecType.LOCAL, new Properties() );
+    PigContext pc = null;
   
     PigServer pigServer;
     
     @Before
-    public void setup() throws ExecException {
+    public void setup() throws PigException {
+    	pc = new PigContext( ExecType.LOCAL, new Properties() );
         pigServer = new PigServer( pc );
     }
     

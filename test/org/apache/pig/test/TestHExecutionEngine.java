@@ -1,10 +1,13 @@
 package org.apache.pig.test;
 
+import java.util.Properties;
+
 import junit.framework.Assert;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.pig.ExecType;
+import org.apache.pig.PigException;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.impl.PigContext;
 import org.junit.Test;
@@ -13,7 +16,7 @@ import org.junit.Test;
 public class TestHExecutionEngine {
     
     @Test(expected = ExecException.class)
-    public void testJobConfGeneration() throws ExecException {
+    public void testJobConfGeneration() throws PigException {
         Configuration conf = new Configuration(false);
         conf.set("foo", "bar");
         PigContext pigContext = new PigContext(ExecType.MAPREDUCE, conf);
@@ -23,7 +26,7 @@ public class TestHExecutionEngine {
     } 
     
     @Test
-    public void testJobConfGenerationWithUserConfigs() throws ExecException {
+    public void testJobConfGenerationWithUserConfigs() throws PigException {
         Configuration conf = new Configuration(false);
         // This property allows Pig to depend on user Configuration 
         // and not the classpath
@@ -32,7 +35,7 @@ public class TestHExecutionEngine {
         conf.set("apache", "pig");
         PigContext pigContext = new PigContext(ExecType.MAPREDUCE, conf);
         pigContext.connect();
-        JobConf jc = pigContext.getExecutionEngine().getJobConf();
+        Properties jc = pigContext.getExecutionEngine().getConfiguration();
         Assert.assertEquals(jc.get("mapred.job.tracker"), "host:12345");
         Assert.assertEquals(jc.get("apache"), "pig");
     }

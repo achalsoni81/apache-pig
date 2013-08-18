@@ -19,6 +19,7 @@ package org.apache.pig.backend.hadoop.executionengine.mapReduceLayer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
@@ -68,6 +69,12 @@ public class PigOutputFormat extends OutputFormat<WritableComparable, Tuple> {
     public RecordWriter<WritableComparable, Tuple> getRecordWriter(TaskAttemptContext taskattemptcontext)
                 throws IOException, InterruptedException {
         setupUdfEnvAndStores(taskattemptcontext);
+        if (mapStores == null) {
+        	mapStores = new LinkedList<POStore>();
+        } 
+        if (reduceStores == null) {
+        	reduceStores = new LinkedList<POStore>();
+        } 
         if(mapStores.size() + reduceStores.size() == 1) {
             // single store case
             POStore store;

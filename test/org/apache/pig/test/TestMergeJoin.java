@@ -54,7 +54,7 @@ public class TestMergeJoin {
     private PigServer pigServer;
     private static MiniCluster cluster = MiniCluster.buildCluster();
 
-    public TestMergeJoin() throws ExecException{
+    public TestMergeJoin() throws PigException{
 
         Properties props = cluster.getProperties();
         props.setProperty("mapred.map.max.attempts", "1");

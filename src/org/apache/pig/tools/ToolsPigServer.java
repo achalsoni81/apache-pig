@@ -25,12 +25,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.pig.ExecType;
+import org.apache.pig.backend.executionengine.ExecType;
+import org.apache.pig.PigException;
 import org.apache.pig.PigServer;
 import org.apache.pig.backend.executionengine.ExecException;
 import org.apache.pig.backend.executionengine.ExecJob;
-import org.apache.pig.backend.hadoop.executionengine.HExecutionEngine;
-import org.apache.pig.backend.hadoop.executionengine.physicalLayer.plans.PhysicalPlan;
 import org.apache.pig.classification.InterfaceAudience;
 import org.apache.pig.classification.InterfaceStability;
 import org.apache.pig.impl.PigContext;
@@ -57,7 +56,7 @@ public class ToolsPigServer extends PigServer {
      * @throws ExecException if throws by PigServer
      * @throws IOException if throws by PigServer
      */
-    public ToolsPigServer(String execTypeString) throws ExecException, IOException {
+    public ToolsPigServer(String execTypeString) throws PigException {
         super(execTypeString);
     }
 
@@ -78,7 +77,10 @@ public class ToolsPigServer extends PigServer {
     public ToolsPigServer(ExecType execType, Properties properties) throws ExecException {
         super(execType, properties);
     }
-
+    
+    public ToolsPigServer(org.apache.pig.ExecType execType, Properties properties) throws PigException {
+        super(execType, properties);
+    }
     /**
      * Register a script without running it.  This method is not compatible with
      * {@link #registerQuery(String)}, {@link #registerScript(String)}, 
@@ -151,10 +153,7 @@ public class ToolsPigServer extends PigServer {
      */
     public List<ExecJob> runPlan(LogicalPlan newPlan,
                                  String jobName) throws FrontendException, ExecException {
-
-        HExecutionEngine engine = new HExecutionEngine(pigContext);
-        PhysicalPlan pp = engine.compile(newPlan, null);
-        PigStats stats = launchPlan(pp, jobName);
+        PigStats stats = launchPlan(newPlan, jobName);
         return getJobs(stats);
     }
 

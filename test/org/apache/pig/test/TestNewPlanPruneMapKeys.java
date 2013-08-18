@@ -50,9 +50,10 @@ import org.apache.pig.newplan.optimizer.Rule;
 import org.junit.Test;
 
 public class TestNewPlanPruneMapKeys {
-    PigContext pc = new PigContext(ExecType.LOCAL, new Properties());
+    PigContext pc = null;
 
     private org.apache.pig.newplan.logical.relational.LogicalPlan migratePlan(String query) throws Exception{
+    	pc = new PigContext(ExecType.LOCAL, new Properties());
         PigServer pigServer = new PigServer( pc );
         org.apache.pig.newplan.logical.relational.LogicalPlan newPlan =
         Util.buildLp(pigServer, query);

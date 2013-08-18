@@ -18,7 +18,6 @@
 
 package org.apache.pig.backend.hadoop.datastorage;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -27,7 +26,7 @@ import java.util.Properties;
 import java.util.Map.Entry;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.pig.ExecType;
+import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.LocalExecType;
 import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.PigMapReduce;
 import org.apache.pig.backend.hadoop.executionengine.util.MapRedUtil;
 
@@ -70,7 +69,7 @@ public class ConfigurationUtil {
 
     public static Properties getLocalFSProperties() {
         Configuration localConf;
-        if (PigMapReduce.sJobContext!=null && PigMapReduce.sJobContext.getConfiguration().get("exectype").equals(ExecType.LOCAL.toString())) {
+        if (PigMapReduce.sJobContext!=null && PigMapReduce.sJobContext.getConfiguration().get("exectype").equals(new LocalExecType().toString())) {
             localConf = new Configuration(false);
             localConf.addResource("core-default.xml");
         } else {
