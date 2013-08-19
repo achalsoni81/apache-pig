@@ -27,6 +27,7 @@ import org.apache.pig.PigServer;
 import org.apache.pig.impl.PigContext;
 import org.apache.pig.tools.pigstats.JobStats;
 import org.apache.pig.tools.pigstats.PigStats;
+import org.apache.pig.tools.pigstats.mapreduce.MRJobStats;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -128,7 +129,7 @@ public class TestNumberOfReducers {
 
             // get the skew-join job stat
             JobStats js = (JobStats) stats.getJobGraph().getSinks().get(0);
-            assertEquals(actual_parallel, js.getNumberReduces());
+            assertEquals(actual_parallel, ((MRJobStats) js).getNumberReduces());
 
             // estimation should only kick in if parallel and default_parallel are not set
             long estimatedReducers = -1;

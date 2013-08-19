@@ -46,6 +46,7 @@ import org.apache.pig.test.utils.GenPhyOp;
 import org.apache.pig.tools.pigstats.JobStats;
 import org.apache.pig.tools.pigstats.PigStats;
 import org.apache.pig.tools.pigstats.PigStats.JobGraph;
+import org.apache.pig.tools.pigstats.mapreduce.MRJobStats;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -97,8 +98,8 @@ public class TestGroupConstParallel {
             assertEquals(1, jGraph.size());
             // find added map-only concatenate job 
             JobStats js = (JobStats)jGraph.getSources().get(0);
-            assertEquals(1, js.getNumberMaps());   
-            assertEquals(1, js.getNumberReduces()); 
+            assertEquals(1,  ((MRJobStats) js).getNumberMaps());   
+            assertEquals(1,  ((MRJobStats) js).getNumberReduces()); 
         }
 
     }

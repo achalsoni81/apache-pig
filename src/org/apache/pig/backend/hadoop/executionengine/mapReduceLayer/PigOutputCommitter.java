@@ -81,6 +81,9 @@ public class PigOutputCommitter extends OutputCommitter {
             List<POStore> stores) throws IOException {
         List<Pair<OutputCommitter, POStore>> committers = 
             new ArrayList<Pair<OutputCommitter,POStore>>();
+        if (stores == null) {
+        	stores = new ArrayList<POStore>();
+        }
         for (POStore store : stores) {
             StoreFuncInterface sFunc = store.getStoreFunc();
             

@@ -73,7 +73,6 @@ public class TestEvalPipelineLocal {
     @Before
     public void setUp() throws Exception{
         FileLocalizer.setR(new Random());
-//        pigServer = new PigServer(ExecType.MAPREDUCE, cluster.getProperties());
         pigServer = new PigServer(ExecType.LOCAL);
     }
     
@@ -1039,7 +1038,7 @@ public class TestEvalPipelineLocal {
         
         File tmpFile = File.createTempFile("test", "txt");
         PrintStream ps = new PrintStream(new FileOutputStream(tmpFile));
-        pigServer.explain("e", "dot", true, true, ps, System.out, System.out);
+        pigServer.explain("e", "dot", true, true, ps, System.out, null, null);
         ps.close();
         
         FileInputStream fis1 = new FileInputStream("test/org/apache/pig/test/data/DotFiles/explain1.dot");

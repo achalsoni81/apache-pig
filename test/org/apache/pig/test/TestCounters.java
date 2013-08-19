@@ -37,6 +37,7 @@ import org.apache.pig.backend.executionengine.ExecJob;
 import org.apache.pig.impl.io.FileLocalizer;
 import org.apache.pig.tools.pigstats.InputStats;
 import org.apache.pig.tools.pigstats.JobStats;
+import org.apache.pig.tools.pigstats.mapreduce.MRJobStats;
 import org.apache.pig.tools.pigstats.PigStats;
 import org.apache.pig.tools.pigstats.PigStats.JobGraph;
 import org.junit.AfterClass;
@@ -99,14 +100,14 @@ public class TestCounters {
         while (iter.hasNext()) {
             JobStats js = iter.next();                    
 
-            System.out.println("Map input records : " + js.getMapInputRecords());
-            assertEquals(MAX, js.getMapInputRecords());
-            System.out.println("Map output records : " + js.getMapOutputRecords());
-            assertEquals(count, js.getMapOutputRecords());
-            assertEquals(0, js.getReduceInputRecords());
-            assertEquals(0, js.getReduceOutputRecords());
-            System.out.println("Hdfs bytes written : " + js.getHdfsBytesWritten());
-            assertEquals(filesize, js.getHdfsBytesWritten());
+            System.out.println("Map input records : " + ((MRJobStats) js).getMapInputRecords());
+            assertEquals(MAX, ((MRJobStats) js).getMapInputRecords());
+            System.out.println("Map output records : " + ((MRJobStats) js).getMapOutputRecords());
+            assertEquals(count, ((MRJobStats) js).getMapOutputRecords());
+            assertEquals(0, ((MRJobStats) js).getReduceInputRecords());
+            assertEquals(0, ((MRJobStats) js).getReduceOutputRecords());
+            System.out.println("Hdfs bytes written : " + ((MRJobStats) js).getHdfsBytesWritten());
+            assertEquals(filesize, ((MRJobStats) js).getHdfsBytesWritten());
         }
 
     }
@@ -150,12 +151,12 @@ public class TestCounters {
         while (iter.hasNext()) {
             JobStats js = iter.next();
         
-            System.out.println("Map input records : " + js.getMapInputRecords());
-            assertEquals(MAX, js.getMapInputRecords());
-            System.out.println("Map output records : " + js.getMapOutputRecords());
-            assertEquals(count, js.getMapOutputRecords());
-            assertEquals(0, js.getReduceInputRecords());
-            assertEquals(0, js.getReduceOutputRecords());
+            System.out.println("Map input records : " + ((MRJobStats) js).getMapInputRecords());
+            assertEquals(MAX, ((MRJobStats) js).getMapInputRecords());
+            System.out.println("Map output records : " + ((MRJobStats) js).getMapOutputRecords());
+            assertEquals(count, ((MRJobStats) js).getMapOutputRecords());
+            assertEquals(0, ((MRJobStats) js).getReduceInputRecords());
+            assertEquals(0, ((MRJobStats) js).getReduceOutputRecords());
         }
             
         System.out.println("Hdfs bytes written : " + pigStats.getBytesWritten());
@@ -208,14 +209,14 @@ public class TestCounters {
         Iterator<JobStats> iter = jp.iterator();
         while (iter.hasNext()) {
             JobStats js = iter.next();
-            System.out.println("Map input records : " + js.getMapInputRecords());
-            assertEquals(MAX, js.getMapInputRecords());
-            System.out.println("Map output records : " + js.getMapOutputRecords());
-            assertEquals(MAX, js.getMapOutputRecords());
-            System.out.println("Reduce input records : " + js.getReduceInputRecords());
-            assertEquals(MAX, js.getReduceInputRecords());
-            System.out.println("Reduce output records : " + js.getReduceOutputRecords());
-            assertEquals(count, js.getReduceOutputRecords());
+            System.out.println("Map input records : " + ((MRJobStats) js).getMapInputRecords());
+            assertEquals(MAX, ((MRJobStats) js).getMapInputRecords());
+            System.out.println("Map output records : " + ((MRJobStats) js).getMapOutputRecords());
+            assertEquals(MAX, ((MRJobStats) js).getMapOutputRecords());
+            System.out.println("Reduce input records : " + ((MRJobStats) js).getReduceInputRecords());
+            assertEquals(MAX, ((MRJobStats) js).getReduceInputRecords());
+            System.out.println("Reduce output records : " + ((MRJobStats) js).getReduceOutputRecords());
+            assertEquals(count, ((MRJobStats) js).getReduceOutputRecords());
         }
         System.out.println("Hdfs bytes written : " + pigStats.getBytesWritten());
         assertEquals(filesize, pigStats.getBytesWritten());
@@ -266,14 +267,14 @@ public class TestCounters {
         Iterator<JobStats> iter = jp.iterator();
         while (iter.hasNext()) {
             JobStats js = iter.next();
-            System.out.println("Map input records : " + js.getMapInputRecords());
-            assertEquals(MAX, js.getMapInputRecords());
-            System.out.println("Map output records : " + js.getMapOutputRecords());
-            assertEquals(MAX, js.getMapOutputRecords());
-            System.out.println("Reduce input records : " + js.getReduceInputRecords());
-            assertEquals(MAX, js.getReduceInputRecords());
-            System.out.println("Reduce output records : " + js.getReduceOutputRecords());
-            assertEquals(count, js.getReduceOutputRecords());
+            System.out.println("Map input records : " + ((MRJobStats) js).getMapInputRecords());
+            assertEquals(MAX, ((MRJobStats) js).getMapInputRecords());
+            System.out.println("Map output records : " + ((MRJobStats) js).getMapOutputRecords());
+            assertEquals(MAX, ((MRJobStats) js).getMapOutputRecords());
+            System.out.println("Reduce input records : " + ((MRJobStats) js).getReduceInputRecords());
+            assertEquals(MAX, ((MRJobStats) js).getReduceInputRecords());
+            System.out.println("Reduce output records : " + ((MRJobStats) js).getReduceOutputRecords());
+            assertEquals(count, ((MRJobStats) js).getReduceOutputRecords());
         }
         System.out.println("Hdfs bytes written : " + pigStats.getBytesWritten());
         assertEquals(filesize, pigStats.getBytesWritten());
@@ -324,14 +325,14 @@ public class TestCounters {
         Iterator<JobStats> iter = jp.iterator();
         while (iter.hasNext()) {
             JobStats js = iter.next();
-            System.out.println("Map input records : " + js.getMapInputRecords());
-            assertEquals(MAX, js.getMapInputRecords());
-            System.out.println("Map output records : " + js.getMapOutputRecords());
-            assertEquals(MAX, js.getMapOutputRecords());
-            System.out.println("Reduce input records : " + js.getReduceInputRecords());
-            assertEquals(count, js.getReduceInputRecords());
-            System.out.println("Reduce output records : " + js.getReduceOutputRecords());
-            assertEquals(count, js.getReduceOutputRecords());
+            System.out.println("Map input records : " + ((MRJobStats) js).getMapInputRecords());
+            assertEquals(MAX, ((MRJobStats) js).getMapInputRecords());
+            System.out.println("Map output records : " + ((MRJobStats) js).getMapOutputRecords());
+            assertEquals(MAX, ((MRJobStats) js).getMapOutputRecords());
+            System.out.println("Reduce input records : " + ((MRJobStats) js).getReduceInputRecords());
+            assertEquals(count, ((MRJobStats) js).getReduceInputRecords());
+            System.out.println("Reduce output records : " + ((MRJobStats) js).getReduceOutputRecords());
+            assertEquals(count, ((MRJobStats) js).getReduceOutputRecords());
         }
         System.out.println("Hdfs bytes written : " + pigStats.getBytesWritten());
         assertEquals(filesize, pigStats.getBytesWritten());
@@ -383,14 +384,14 @@ public class TestCounters {
         Iterator<JobStats> iter = jp.iterator();
         while (iter.hasNext()) {
             JobStats js = iter.next();
-            System.out.println("Map input records : " + js.getMapInputRecords());
-            assertEquals(MAX, js.getMapInputRecords());
-            System.out.println("Map output records : " + js.getMapOutputRecords());
-            assertEquals(MAX, js.getMapOutputRecords());
-            System.out.println("Reduce input records : " + js.getReduceInputRecords());
-            assertEquals(count, js.getReduceInputRecords());
-            System.out.println("Reduce output records : " + js.getReduceOutputRecords());
-            assertEquals(count, js.getReduceOutputRecords());
+            System.out.println("Map input records : " + ((MRJobStats) js).getMapInputRecords());
+            assertEquals(MAX, ((MRJobStats) js).getMapInputRecords());
+            System.out.println("Map output records : " + ((MRJobStats) js).getMapOutputRecords());
+            assertEquals(MAX, ((MRJobStats) js).getMapOutputRecords());
+            System.out.println("Reduce input records : " + ((MRJobStats) js).getReduceInputRecords());
+            assertEquals(count, ((MRJobStats) js).getReduceInputRecords());
+            System.out.println("Reduce output records : " + ((MRJobStats) js).getReduceOutputRecords());
+            assertEquals(count, ((MRJobStats) js).getReduceOutputRecords());
         }
         System.out.println("Hdfs bytes written : " + pigStats.getBytesWritten());
         assertEquals(filesize, pigStats.getBytesWritten());
@@ -441,20 +442,20 @@ public class TestCounters {
         JobGraph jp = pigStats.getJobGraph();
         JobStats js = (JobStats)jp.getSinks().get(0);
         
-        System.out.println("Job id: " + js.getName());
+        System.out.println("Job id: " + ((MRJobStats) js).getName());
         System.out.println(jp.toString());
         
-        System.out.println("Map input records : " + js.getMapInputRecords());
-        assertEquals(MAX, js.getMapInputRecords());
-        System.out.println("Map output records : " + js.getMapOutputRecords());
-        assertEquals(MAX, js.getMapOutputRecords());
-        System.out.println("Reduce input records : " + js.getReduceInputRecords());
-        assertEquals(count, js.getReduceInputRecords());
-        System.out.println("Reduce output records : " + js.getReduceOutputRecords());
-        assertEquals(count, js.getReduceOutputRecords());
+        System.out.println("Map input records : " + ((MRJobStats) js).getMapInputRecords());
+        assertEquals(MAX, ((MRJobStats) js).getMapInputRecords());
+        System.out.println("Map output records : " + ((MRJobStats) js).getMapOutputRecords());
+        assertEquals(MAX, ((MRJobStats) js).getMapOutputRecords());
+        System.out.println("Reduce input records : " + ((MRJobStats) js).getReduceInputRecords());
+        assertEquals(count, ((MRJobStats) js).getReduceInputRecords());
+        System.out.println("Reduce output records : " + ((MRJobStats) js).getReduceOutputRecords());
+        assertEquals(count, ((MRJobStats) js).getReduceOutputRecords());
         
-        System.out.println("Hdfs bytes written : " + js.getHdfsBytesWritten());
-        assertEquals(filesize, js.getHdfsBytesWritten());
+        System.out.println("Hdfs bytes written : " + ((MRJobStats) js).getHdfsBytesWritten());
+        assertEquals(filesize, ((MRJobStats) js).getHdfsBytesWritten());
 
     }
     
@@ -485,7 +486,7 @@ public class TestCounters {
 
         JobStats js = (JobStats)stats.getJobGraph().getSinks().get(0);
         
-        Map<String, Long> entry = js.getMultiStoreCounters();
+        Map<String, Long> entry = ((MRJobStats) js).getMultiStoreCounters();
         long counter = 0;
         for (Long val : entry.values()) {
             counter += val;
@@ -533,7 +534,7 @@ public class TestCounters {
 
         JobStats js = (JobStats)stats.getJobGraph().getSinks().get(0);
         
-        Map<String, Long> entry = js.getMultiStoreCounters();
+        Map<String, Long> entry = ((MRJobStats) js).getMultiStoreCounters();
         long counter = 0;
         for (Long val : entry.values()) {
             counter += val;

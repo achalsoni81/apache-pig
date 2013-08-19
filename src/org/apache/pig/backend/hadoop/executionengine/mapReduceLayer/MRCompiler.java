@@ -38,7 +38,6 @@ import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.pig.CollectableLoadFunc;
-import org.apache.pig.ExecType;
 import org.apache.pig.FuncSpec;
 import org.apache.pig.IndexableLoadFunc;
 import org.apache.pig.LoadFunc;
@@ -1231,7 +1230,7 @@ public class MRCompiler extends PhyPlanVisitor {
   
     @SuppressWarnings("unchecked")
     private boolean hasTooManyInputFiles(MapReduceOper mro, Configuration conf) {
-        if (pigContext == null || pigContext.getExecType() == ExecType.LOCAL) {
+        if (pigContext == null || pigContext.getExecType().isLocal()) {
             return false;
         }
         
@@ -2592,9 +2591,9 @@ public class MRCompiler extends PhyPlanVisitor {
         return new Pair<MapReduceOper, Integer>(mro, rp);
     }
 
-    static class LastInputStreamingOptimizer extends MROpPlanVisitor {
+    public static class LastInputStreamingOptimizer extends MROpPlanVisitor {
         String chunkSize;
-        LastInputStreamingOptimizer(MROperPlan plan, String chunkSize) {
+        public LastInputStreamingOptimizer(MROperPlan plan, String chunkSize) {
             super(plan, new DepthFirstWalker<MapReduceOper, MROperPlan>(plan));
             this.chunkSize = chunkSize;
         }

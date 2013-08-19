@@ -34,6 +34,7 @@ import org.apache.pig.test.utils.TestHelper;
 import org.apache.pig.tools.pigstats.JobStats;
 import org.apache.pig.tools.pigstats.PigStats;
 import org.apache.pig.tools.pigstats.PigStats.JobGraph;
+import org.apache.pig.tools.pigstats.mapreduce.MRJobStats;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -119,8 +120,8 @@ public class TestFRJoin2 {
             assertEquals(3, jGraph.size());
             // find added map-only concatenate job 
             JobStats js = (JobStats)jGraph.getSuccessors(jGraph.getSources().get(0)).get(0);
-            assertEquals(1, js.getNumberMaps());   
-            assertEquals(0, js.getNumberReduces()); 
+            assertEquals(1, ((MRJobStats) js).getNumberMaps());   
+            assertEquals(0,  ((MRJobStats) js).getNumberReduces()); 
         }
         {
             pigServer.getPigContext().getProperties().setProperty(
@@ -168,8 +169,8 @@ public class TestFRJoin2 {
             assertEquals(3, jGraph.size());
             // find added map-only concatenate job 
             JobStats js = (JobStats)jGraph.getSuccessors(jGraph.getSources().get(0)).get(0);
-            assertEquals(1, js.getNumberMaps());   
-            assertEquals(0, js.getNumberReduces()); 
+            assertEquals(1, ((MRJobStats) js).getNumberMaps());   
+            assertEquals(0, ((MRJobStats) js).getNumberReduces()); 
             Util.checkLogFileMessage(logFile, 
                     new String[] {"number of input files: 0", "failed to get number of input files"}, 
                     false
@@ -309,8 +310,8 @@ public class TestFRJoin2 {
             assertEquals(3, jGraph.size());
             // find added map-only concatenate job 
             JobStats js = (JobStats)jGraph.getSuccessors(jGraph.getSources().get(0)).get(0);
-            assertEquals(1, js.getNumberMaps());   
-            assertEquals(0, js.getNumberReduces());   
+            assertEquals(1,  ((MRJobStats) js).getNumberMaps());   
+            assertEquals(0,  ((MRJobStats) js).getNumberReduces());   
         }
         {
             pigServer.getPigContext().getProperties().setProperty(

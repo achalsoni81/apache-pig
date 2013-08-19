@@ -675,13 +675,11 @@ public class Util {
 
     public static String generateURI(String filename, PigContext context)
             throws IOException {
-        if (context.getExecType() == ExecType.MAPREDUCE) {
+        if (!context.getExecType().isLocal()) {
             return FileLocalizer.hadoopify(filename, context);
-        } else if (context.getExecType() == ExecType.LOCAL) {
-            return filename;
         } else {
-            throw new IllegalStateException("ExecType: " + context.getExecType());
-        }
+            return filename;
+        } 
     }
 
     public static Object getPigConstant(String pigConstantAsString) throws ParserException {
@@ -1015,8 +1013,8 @@ public class Util {
 
     public static LogicalPlan buildLp(PigServer pigServer, String query)
     throws Exception {
-    	pigServer.setBatchOn();
-    	pigServer.registerQuery( query );
+        pigServer.setBatchOn();
+        pigServer.registerQuery( query );
         java.lang.reflect.Method buildLp = pigServer.getClass().getDeclaredMethod("buildLp");
         buildLp.setAccessible(true);
         return (LogicalPlan ) buildLp.invoke( pigServer );
@@ -1024,7 +1022,7 @@ public class Util {
 
     public static PhysicalPlan buildPp(PigServer pigServer, String query)
     throws Exception {
-    	buildLp( pigServer, query );
+        buildLp( pigServer, query );
         java.lang.reflect.Method compilePp = pigServer.getClass().getDeclaredMethod("compilePp" );
         compilePp.setAccessible(true);
 

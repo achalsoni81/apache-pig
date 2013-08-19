@@ -277,9 +277,9 @@ public class PigGenericMapReduce {
 
         protected boolean errorInReduce = false;
         
-        PhysicalOperator[] roots;
+        protected PhysicalOperator[] roots;
 
-        private PhysicalOperator leaf;
+        protected PhysicalOperator leaf;
         
         PigContext pigContext = null;
         protected volatile boolean initialized = false;

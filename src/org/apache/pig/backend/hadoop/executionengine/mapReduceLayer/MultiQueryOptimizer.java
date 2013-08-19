@@ -70,7 +70,7 @@ import org.apache.pig.impl.util.Pair;
  *  This optimizer merges those MapReduceOpers by replacing POLoad/POStore 
  *  combination with POSplit operator.    
  */
-class MultiQueryOptimizer extends MROpPlanVisitor {
+public class MultiQueryOptimizer extends MROpPlanVisitor {
     
     private Log log = LogFactory.getLog(getClass());
     
@@ -80,7 +80,7 @@ class MultiQueryOptimizer extends MROpPlanVisitor {
     
     private boolean inIllustrator = false;
     
-    MultiQueryOptimizer(MROperPlan plan, boolean inIllustrator) {
+    public MultiQueryOptimizer(MROperPlan plan, boolean inIllustrator) {
         super(plan, new ReverseDependencyOrderWalker<MapReduceOper, MROperPlan>(plan));
         nig = NodeIdGenerator.getGenerator();
         List<MapReduceOper> roots = plan.getRoots();

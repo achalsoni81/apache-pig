@@ -33,7 +33,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.pig.ExecType;
 import org.apache.pig.PigConstants;
 import org.apache.pig.data.SchemaTupleClassGenerator.GenContext;
 import org.apache.pig.data.utils.StructuresHelper.SchemaKey;
@@ -265,7 +264,7 @@ public class SchemaTupleBackend {
     private static SchemaTupleBackend stb;
 
     public static void initialize(Configuration jConf, PigContext pigContext) throws IOException {
-        initialize(jConf, pigContext, pigContext.getExecType() == ExecType.LOCAL);
+        initialize(jConf, pigContext, pigContext.getExecType().isLocal());
     }
 
     public static void initialize(Configuration jConf, PigContext pigContext, boolean isLocal) throws IOException {

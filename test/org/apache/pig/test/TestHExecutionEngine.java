@@ -1,5 +1,7 @@
 package org.apache.pig.test;
 
+import java.util.Properties;
+
 import junit.framework.Assert;
 
 import org.apache.hadoop.conf.Configuration;
@@ -32,7 +34,7 @@ public class TestHExecutionEngine {
         conf.set("apache", "pig");
         PigContext pigContext = new PigContext(ExecType.MAPREDUCE, conf);
         pigContext.connect();
-        JobConf jc = pigContext.getExecutionEngine().getJobConf();
+        Properties jc = pigContext.getExecutionEngine().getConfiguration();
         Assert.assertEquals(jc.get("mapred.job.tracker"), "host:12345");
         Assert.assertEquals(jc.get("apache"), "pig");
     }

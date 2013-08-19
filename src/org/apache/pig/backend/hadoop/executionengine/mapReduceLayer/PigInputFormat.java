@@ -19,12 +19,7 @@ package org.apache.pig.backend.hadoop.executionengine.mapReduceLayer;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.HashSet;
-import java.util.HashMap;
-import java.util.Comparator;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -36,9 +31,7 @@ import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobContext;
-import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
-import org.apache.pig.ExecType;
 import org.apache.pig.FuncSpec;
 import org.apache.pig.IndexableLoadFunc;
 import org.apache.pig.LoadFunc;
@@ -54,7 +47,6 @@ import org.apache.pig.impl.PigContext;
 import org.apache.pig.impl.io.FileSpec;
 import org.apache.pig.impl.plan.OperatorKey;
 import org.apache.pig.impl.util.ObjectSerializer;
-import org.apache.pig.impl.util.Pair;
 import org.apache.pig.impl.util.UDFContext;
 
 public class PigInputFormat extends InputFormat<Text, Tuple> {
@@ -240,7 +232,7 @@ public class PigInputFormat extends InputFormat<Text, Tuple> {
 
                 // if the execution is against Mapred DFS, set
                 // working dir to /user/<userid>
-                if(pigContext.getExecType() == ExecType.MAPREDUCE) {
+                if(!pigContext.getExecType().isLocal()) {
                     fs.setWorkingDirectory(jobcontext.getWorkingDirectory());
                 }
                 

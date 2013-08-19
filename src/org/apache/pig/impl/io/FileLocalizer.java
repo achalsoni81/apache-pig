@@ -146,7 +146,7 @@ public class FileLocalizer {
     static String checkDefaultPrefix(ExecType execType, String fileSpec) {
         if (fileSpec.startsWith(LOCAL_PREFIX))
             return fileSpec;
-        return (execType == ExecType.LOCAL ? LOCAL_PREFIX : "") + fileSpec;
+        return (execType.isLocal() ? LOCAL_PREFIX : "") + fileSpec;
     }
 
     /**

@@ -106,6 +106,7 @@ import org.apache.pig.impl.util.Pair;
 import org.apache.pig.impl.util.UDFContext;
 import org.apache.pig.impl.util.Utils;
 import org.apache.pig.tools.pigstats.ScriptState;
+import org.apache.pig.tools.pigstats.mapreduce.MRScriptState;
 
 /**
  * This is compiler class that takes an MROperPlan and converts
@@ -270,7 +271,7 @@ public class JobControlCompiler{
         this.plan = plan;
 
         int timeToSleep;
-        String defaultPigJobControlSleep = pigContext.getExecType() == ExecType.LOCAL ? "100" : "5000";
+        String defaultPigJobControlSleep = pigContext.getExecType().isLocal() ? "100" : "5000";
         String pigJobControlSleep = conf.get("pig.jobcontrol.sleep", defaultPigJobControlSleep);
         if (!pigJobControlSleep.equals(defaultPigJobControlSleep)) {
           log.info("overriding default JobControl sleep (" + defaultPigJobControlSleep + ") to " + pigJobControlSleep);
@@ -438,7 +439,7 @@ public class JobControlCompiler{
         // add settings for pig statistics
         String setScriptProp = conf.get(ScriptState.INSERT_ENABLED, "true");
         if (setScriptProp.equalsIgnoreCase("true")) {
-            ScriptState ss = ScriptState.get();
+            MRScriptState ss = (MRScriptState) ScriptState.get();
             ss.addSettingsToConf(mro, conf);
         }
 
@@ -501,7 +502,7 @@ public class JobControlCompiler{
                 }
             }
 
-            if (!pigContext.inIllustrator && pigContext.getExecType() != ExecType.LOCAL)
+            if (!pigContext.inIllustrator && ! (pigContext.getExecType().isLocal()))
             {
 
                 // Setup the DistributedCache for this job
@@ -828,7 +829,7 @@ public class JobControlCompiler{
 
             // It's a hack to set distributed cache file for hadoop 23. Once MiniMRCluster do not require local
             // jar on fixed location, this can be removed
-            if (pigContext.getExecType() == ExecType.MAPREDUCE) {
+            if (!pigContext.getExecType().isLocal()) {
                 String newfiles = conf.get("alternative.mapreduce.job.cache.files");
                 if (newfiles!=null) {
                     String files = conf.get("mapreduce.job.cache.files");
@@ -1426,7 +1427,7 @@ public class JobControlCompiler{
 
         // XXX Hadoop currently doesn't support distributed cache in local mode.
         // This line will be removed after the support is added by Hadoop team.
-        if (pigContext.getExecType() != ExecType.LOCAL) {
+        if (!(pigContext.getExecType().isLocal())) {
             symlink = prefix + "_"
                     + Integer.toString(System.identityHashCode(filename)) + "_"
                     + Long.toString(System.currentTimeMillis());
@@ -1542,7 +1543,7 @@ public class JobControlCompiler{
 
             // XXX Hadoop currently doesn't support distributed cache in local mode.
             // This line will be removed after the support is added
-            if (pigContext.getExecType() == ExecType.LOCAL) return;
+            if (pigContext.getExecType().isLocal()) return;
 
             // set up distributed cache for the replicated files
             FileSpec[] replFiles = join.getReplFiles();
@@ -1583,7 +1584,7 @@ public class JobControlCompiler{
 
             // XXX Hadoop currently doesn't support distributed cache in local mode.
             // This line will be removed after the support is added
-            if (pigContext.getExecType() == ExecType.LOCAL) return;
+            if (!(pigContext.getExecType().isLocal())) return;
 
             String indexFile = join.getIndexFile();
 
@@ -1607,7 +1608,7 @@ public class JobControlCompiler{
 
             // XXX Hadoop currently doesn't support distributed cache in local mode.
             // This line will be removed after the support is added
-            if (pigContext.getExecType() == ExecType.LOCAL) return;
+            if (pigContext.getExecType().isLocal()) return;
 
             String indexFile = mergeCoGrp.getIndexFileName();
 
@@ -1644,7 +1645,7 @@ public class JobControlCompiler{
 
             // XXX Hadoop currently doesn't support distributed cache in local mode.
             // This line will be removed after the support is added
-            if (pigContext.getExecType() == ExecType.LOCAL) return;
+            if (pigContext.getExecType().isLocal()) return;
 
             // set up distributed cache for files indicated by the UDF
             String[] files = func.getCacheFiles();
