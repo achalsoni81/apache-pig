@@ -584,7 +584,7 @@ public class GruntParser extends PigScriptParser {
         else
         {
             PigContext pc = mPigServer.getPigContext();
-            pc.getExecutionEngine().setProperty(pc.getProperties(), key, value);
+            pc.getExecutionEngine().setProperty(key, value);
         }
     }
 

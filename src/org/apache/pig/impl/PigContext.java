@@ -314,16 +314,14 @@ public class PigContext implements Serializable {
     }
 
     public void connect() throws ExecException {
-
         this.executionEngine = execType.getExecutionEngine(this);
         executionEngine.init();
         dfs = executionEngine.getDataStorage();
         lfs = new HDataStorage(URI.create("file:///"), properties);
-
     }
 
     public void setJobtrackerLocation(String newLocation) {
-        executionEngine.setProperty(properties, "mapred.job.tracker", newLocation);
+        executionEngine.setProperty("mapred.job.tracker", newLocation);
     }
 
     /**
